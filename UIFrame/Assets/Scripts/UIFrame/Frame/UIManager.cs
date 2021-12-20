@@ -7,7 +7,7 @@ public class UIManager
     public static UIManager Instance;
 
     private int _instanceID = 0;
-    private UIInfoDataController _uiInfoDataController;
+    private UIInfoController _uiInfoController;
     private UIConfigController _uiConfigController;
 
     private Transform _root;
@@ -24,49 +24,90 @@ public class UIManager
 
     private UIManager()
     {
-        _uiInfoDataController = new UIInfoDataController();
+        _uiInfoController = new UIInfoController();
         _uiConfigController = new UIConfigController();
         _root = GameObject.Find("Canvas").transform;
         _layerDic = new Dictionary<string, Transform>();
     }
 
+    public void Update()
+    {
+        IEnumerable<UIBasePlane> ie = _uiInfoController.GetIEnumerable();
+        foreach(var plane in ie)
+        {
+            plane.Update();
+        }
+    }
+
     public void Open(UIPlaneType type, IUIDataBase data)
     {
-        UIPlaneInfo info = _uiInfoDataController.GetPlaneInfo(type);
+        Mutual(type);
+        UIPlaneInfo info = _uiInfoController.GetPlaneInfo(type);
         if (null == info)
         {
             UIBasePlane plane = LoadPanel(type);
             plane.SetPlaneType(type);
             info = new UIPlaneInfo(type, InstanceID(), plane);
-            _uiInfoDataController.AddInfo(info);
+            _uiInfoController.AddInfo(info);
         }
         info.Plane.OnEnter(data);
     }
 
     public void Close(UIPlaneType type)
     {
-        UIPlaneInfo info = _uiInfoDataController.GetPlaneInfo(type);
+        UIPlaneInfo info = _uiInfoController.GetPlaneInfo(type);
         if (null != info)
         {
             GameObject.Destroy(info.Plane.Tr.gameObject);
             info.Plane.Exit();
-            _uiInfoDataController.Remove(info);
+            _uiInfoController.Remove(info);
         }
     }
 
     // 返回上一个界面
     public void Back()
     {
-        UIPlaneInfo info = _uiInfoDataController.LastOpenPlaneInfo();
+        UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
         if (null != info)
         {
             info.Plane.Resume();
         }
     }
 
+    // 互斥面板，打开一个面板从后往前关掉互斥面板
+    private void Mutual(UIPlaneType type)
+    {
+        UIConfig uiConfig = _uiConfigController.GetConfig(type);
+        if (null == uiConfig || null == uiConfig.MutualHash)
+        {
+            return;
+        }
+
+        UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
+        while (null != info)
+        {
+            if (!uiConfig.MutualHash.Contains(info.Type))
+            {
+                break;
+            }
+            Close(info.Type);
+            info = _uiInfoController.LastOpenPlaneInfo();
+        }
+    }
+
+    // 打开一个界面，挂起最后一个打开的界面
+    public void HangUp()
+    {
+        UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
+        if (null != info)
+        {
+            info.Plane.HangUp();
+        }
+    }
+
     public bool IsOpen(UIPlaneType type)
     {
-        UIPlaneInfo info = _uiInfoDataController.LastOpenPlaneInfo();
+        UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
         return null != info;
     }
 

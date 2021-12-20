@@ -16,11 +16,16 @@ public abstract class UIBasePlane
     public virtual void OnEnter(IUIDataBase data)
     {
         _data = data;
+        Debug.LogError("OnEnter:" + _planeType);
     }
 
     public virtual void Exit()
     {
         Debug.LogError("Exit:" + _planeType);
+    }
+
+    public virtual void Update()
+    {
     }
 
     public virtual void HangUp()

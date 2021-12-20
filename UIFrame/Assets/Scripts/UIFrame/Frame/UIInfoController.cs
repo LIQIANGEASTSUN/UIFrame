@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIInfoDataController
+public class UIInfoController
 {
     private Stack<int> _stack;
     private Dictionary<UIPlaneType, int> _planeDic;
     private Dictionary<int, UIPlaneInfo> _planeInfoDic;
 
-    public UIInfoDataController()
+    public UIInfoController()
     {
         _stack = new Stack<int>();
         _planeDic = new Dictionary<UIPlaneType, int>();
@@ -56,5 +56,13 @@ public class UIInfoDataController
             return info;
         }
         return info;
+    }
+ 
+    public IEnumerable<UIBasePlane> GetIEnumerable()
+    {
+        foreach(var kv in _planeInfoDic)
+        {
+            yield return kv.Value.Plane;
+        }
     }
 }

@@ -8,13 +8,23 @@ public class UIConfigController
     public UIConfigController()
     {
         _configDic = new Dictionary<UIPlaneType, UIConfig>();
-        Register();
+        RegisterPlaneInfo();
+        RegisterMutual();
     }
 
-    private void Add(UIPlaneType type, UIBasePlane basePlane, string assetName)
+    private void AddPlaneInfo(UIPlaneType type, UIBasePlane basePlane, string assetName)
     {
         UIConfig uiConfig = new UIConfig(type, basePlane, assetName, "MainLayer");
         _configDic.Add(type, uiConfig);
+    }
+
+    private void AddMutual(UIPlaneType type, HashSet<UIPlaneType> hash)
+    {
+        UIConfig uiConfig = null;
+        if (_configDic.TryGetValue(type, out uiConfig))
+        {
+            uiConfig.SetMutualHash(hash);
+        }
     }
 
     public UIConfig GetConfig(UIPlaneType type)
@@ -22,10 +32,18 @@ public class UIConfigController
         return _configDic[type];
     }
 
-    private void Register()
+    // 注册面板信息
+    private void RegisterPlaneInfo()
     {
-        Add(UIPlaneType.Main, new UIMainView(), "UIMainView");
-        Add(UIPlaneType.Shop, new UIShopView(), "UIShopView");
-        Add(UIPlaneType.Backpacker, new UIBackpackerView(), "UIBackpackerView");
+        AddPlaneInfo(UIPlaneType.Main, new UIMainView(), "UIMainView");
+        AddPlaneInfo(UIPlaneType.Shop, new UIShopView(), "UIShopView");
+        AddPlaneInfo(UIPlaneType.Backpacker, new UIBackpackerView(), "UIBackpackerView");
     }
+
+    // 注册互斥面板
+    private void RegisterMutual()
+    {
+        AddMutual(UIPlaneType.Backpacker, new HashSet<UIPlaneType>() { UIPlaneType.Shop });
+    }
+
 }
