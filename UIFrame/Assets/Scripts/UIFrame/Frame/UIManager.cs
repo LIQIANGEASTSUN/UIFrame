@@ -112,16 +112,6 @@ public class UIManager
         }
     }
 
-    // 打开一个界面，挂起最后一个打开的界面
-    public void HangUp()
-    {
-        UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
-        if (null != info)
-        {
-            info.Plane.HangUp();
-        }
-    }
-
     public bool IsOpen(UIPlaneType type)
     {
         UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
