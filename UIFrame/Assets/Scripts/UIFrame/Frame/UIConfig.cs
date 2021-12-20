@@ -8,7 +8,10 @@ public class UIConfig
     private UIBasePlane _basePlane;
     private string _assetName;
     private string _layer;
+    // 互斥面板
     private HashSet<UIPlaneType> _mutualHash;
+    // 挂起面板
+    private HashSet<UIPlaneType> _hungupHash;
     public UIConfig(UIPlaneType type, UIBasePlane basePlane, string assetName, string layer)
     {
         _type = type;
@@ -20,6 +23,11 @@ public class UIConfig
     public void SetMutualHash(HashSet<UIPlaneType> hash)
     {
         _mutualHash = hash;
+    }
+
+    public void SetHungupHash(HashSet<UIPlaneType> hash)
+    {
+        _hungupHash = hash;
     }
 
     public UIPlaneType Type
@@ -45,6 +53,11 @@ public class UIConfig
     public HashSet<UIPlaneType> MutualHash
     {
         get { return _mutualHash; }
+    }
+
+    public HashSet<UIPlaneType> HungupHash
+    {
+        get { return _hungupHash; }
     }
 }
 

@@ -42,6 +42,7 @@ public class UIManager
     public void Open(UIPlaneType type, IUIDataBase data)
     {
         Mutual(type);
+        Hungup(type);
         UIPlaneInfo info = _uiInfoController.GetPlaneInfo(type);
         if (null == info)
         {
@@ -92,6 +93,22 @@ public class UIManager
             }
             Close(info.Type);
             info = _uiInfoController.LastOpenPlaneInfo();
+        }
+    }
+
+    // 挂起面板，打开一个面板挂起最后一个面板
+    private void Hungup(UIPlaneType type)
+    {
+        UIConfig uiConfig = _uiConfigController.GetConfig(type);
+        if (null == uiConfig || null == uiConfig.HungupHash)
+        {
+            return;
+        }
+
+        UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
+        if (uiConfig.HungupHash.Contains(info.Type))
+        {
+            info.Plane.HangUp();
         }
     }
 
