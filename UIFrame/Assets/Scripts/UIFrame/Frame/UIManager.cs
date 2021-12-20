@@ -36,10 +36,11 @@ public class UIManager
         if (null == info)
         {
             UIBasePlane plane = LoadPanel(type);
+            plane.SetPlaneType(type);
             info = new UIPlaneInfo(type, InstanceID(), plane);
             _uiInfoDataController.AddInfo(info);
         }
-        info.Plane.Open(data);
+        info.Plane.OnEnter(data);
     }
 
     public void Close(UIPlaneType type)
@@ -48,13 +49,13 @@ public class UIManager
         if (null != info)
         {
             GameObject.Destroy(info.Plane.Tr.gameObject);
-            info.Plane.Close();
+            info.Plane.Exit();
             _uiInfoDataController.Remove(info);
         }
     }
 
     // 返回上一个界面
-    public void BackspacePlane()
+    public void Back()
     {
         UIPlaneInfo info = _uiInfoDataController.LastOpenPlaneInfo();
         if (null != info)

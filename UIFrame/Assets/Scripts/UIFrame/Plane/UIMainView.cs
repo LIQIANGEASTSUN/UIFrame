@@ -10,9 +10,9 @@ public class UIMainView : UIBasePlane
 {
     private Button _closeBtn;
     private Button _shopBtn;
-    public override void Open(IUIDataBase data)
+    public override void OnEnter(IUIDataBase data)
     {
-        base.Open(data);
+        base.OnEnter(data);
 
         _closeBtn = _tr.Find("CloseBtn").GetComponent<Button>();
         _closeBtn.onClick.AddListener(CloseOnClick);
@@ -21,24 +21,9 @@ public class UIMainView : UIBasePlane
         _shopBtn.onClick.AddListener(ShopOnClick);
     }
 
-    public override void Close()
-    {
-        base.Close();
-    }
-
-    public override void HangUp()
-    {
-        base.HangUp();
-    }
-
-    public override void Resume()
-    {
-        base.Resume();
-    }
-
     private void CloseOnClick()
     {
-        UIManager.GetInstance().Close(UIPlaneType.Main);
+        Close();
     }
 
     private void ShopOnClick()

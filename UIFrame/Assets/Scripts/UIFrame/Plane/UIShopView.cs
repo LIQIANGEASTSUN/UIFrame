@@ -12,15 +12,15 @@ public class UIShopView : UIBasePlane
     private Button _backspaceBtn;
     private Button _backpackerBtn1;
     private Button _backpackerBtn2;
-    public override void Open(IUIDataBase data)
+    public override void OnEnter(IUIDataBase data)
     {
-        base.Open(data);
+        base.OnEnter(data);
 
         _closeBtn = _tr.Find("CloseBtn").GetComponent<Button>();
         _closeBtn.onClick.AddListener(CloseOnClick);
 
-        _backspaceBtn = _tr.Find("BackspaceBtn").GetComponent<Button>();
-        _backspaceBtn.onClick.AddListener(BackspaceOnClick);
+        _backspaceBtn = _tr.Find("BackBtn").GetComponent<Button>();
+        _backspaceBtn.onClick.AddListener(BackOnClick);
 
         _backpackerBtn1 = _tr.Find("BackpackerBtn1").GetComponent<Button>();
         _backpackerBtn1.onClick.AddListener(BackpackerOnClick1);
@@ -29,31 +29,16 @@ public class UIShopView : UIBasePlane
         _backpackerBtn2.onClick.AddListener(BackpackerOnClick2);
     }
 
-    public override void Close()
-    {
-        base.Close();
-    }
-
-    public override void HangUp()
-    {
-        base.HangUp();
-    }
-
-    public override void Resume()
-    {
-        base.Resume();
-    }
-
     private void CloseOnClick()
     {
-        UIManager.GetInstance().Close(UIPlaneType.Shop);
+        Close();
     }
 
     // 返回按钮
-    private void BackspaceOnClick()
+    private void BackOnClick()
     {
         UIManager.GetInstance().Close(UIPlaneType.Shop);
-        UIManager.GetInstance().BackspacePlane();
+        Back();
     }
 
     // 打开背包界面，关闭商店界面

@@ -485,7 +485,7 @@ GameObject:
   - component: {fileID: 2462671977597663590}
   - component: {fileID: 8950348214681879080}
   m_Layer: 5
-  m_Name: BackspaceBtn
+  m_Name: BackBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

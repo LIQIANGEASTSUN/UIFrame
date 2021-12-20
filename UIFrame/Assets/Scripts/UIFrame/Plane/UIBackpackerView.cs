@@ -10,41 +10,26 @@ public class UIBackpackerView : UIBasePlane
 {
     private Button _closeBtn;
     private Button _backspaceBtn;
-    public override void Open(IUIDataBase data)
+    public override void OnEnter(IUIDataBase data)
     {
-        base.Open(data);
+        base.OnEnter(data);
 
         _closeBtn = _tr.Find("CloseBtn").GetComponent<Button>();
         _closeBtn.onClick.AddListener(CloseOnClick);
 
-        _backspaceBtn = _tr.Find("BackspaceBtn").GetComponent<Button>();
-        _backspaceBtn.onClick.AddListener(BackspaceOnClick);
-    }
-
-    public override void Close()
-    {
-        base.Close();
-    }
-
-    public override void HangUp()
-    {
-        base.HangUp();
-    }
-
-    public override void Resume()
-    {
-        base.Resume();
+        _backspaceBtn = _tr.Find("BackBtn").GetComponent<Button>();
+        _backspaceBtn.onClick.AddListener(BackOnClick);
     }
 
     private void CloseOnClick()
     {
-        UIManager.GetInstance().Close(UIPlaneType.Backpacker);
+        Close();
     }
 
     // 返回按钮
-    private void BackspaceOnClick()
+    private void BackOnClick()
     {
-        UIManager.GetInstance().Close(UIPlaneType.Backpacker);
-        UIManager.GetInstance().BackspacePlane();
+        Close();
+        Back();
     }
 }
