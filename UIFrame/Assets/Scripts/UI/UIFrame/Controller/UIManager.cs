@@ -201,5 +201,4 @@ public class UIManager
     {
         return ++_instanceID;
     }
-
 }

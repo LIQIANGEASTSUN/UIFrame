@@ -10,6 +10,12 @@ public class UIConfigController
         _configDic = new Dictionary<UIPlaneType, UIConfig>();
         RegisterPlaneInfo();
         RegisterMutual();
+        RegisterHungup();
+    }
+
+    public UIConfig GetConfig(UIPlaneType type)
+    {
+        return _configDic[type];
     }
 
     private void AddPlaneInfo(UIPlaneType type, UIBasePlane basePlane, string assetName)
@@ -26,10 +32,14 @@ public class UIConfigController
             uiConfig.SetMutualHash(hash);
         }
     }
-
-    public UIConfig GetConfig(UIPlaneType type)
+    
+    private void AddHungup(UIPlaneType type, HashSet<UIPlaneType> hash)
     {
-        return _configDic[type];
+        UIConfig uiConfig = null;
+        if (_configDic.TryGetValue(type, out uiConfig))
+        {
+            uiConfig.SetHungupHash(hash);
+        }
     }
 
     // 注册面板信息
@@ -46,4 +56,8 @@ public class UIConfigController
         //AddMutual(UIPlaneType.Backpacker, new HashSet<UIPlaneType>() { UIPlaneType.Shop });
     }
 
+    private void RegisterHungup()
+    {
+        AddHungup(UIPlaneType.Backpacker, new HashSet<UIPlaneType>() { UIPlaneType.Shop });
+    }
 }
