@@ -19,5 +19,10 @@ public class GameRoot : MonoBehaviour
         {
             UIManager.GetInstance().OpenOrRefresh(UIPlaneType.Main, null);
         }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            UIManager.GetInstance().Close(UIPlaneType.Shop);
+        }
     }
 }
