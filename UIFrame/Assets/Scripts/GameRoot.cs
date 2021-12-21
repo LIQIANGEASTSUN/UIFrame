@@ -14,5 +14,10 @@ public class GameRoot : MonoBehaviour
     void Update()
     {
         UIManager.GetInstance().Update();
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            UIManager.GetInstance().OpenOrRefresh(UIPlaneType.Main, null);
+        }
     }
 }
