@@ -37,31 +37,82 @@ public class UIManager
         {
             plane.Update();
         }
+        _uiInfoController.Update();
     }
 
+    /// <summary>
+    /// 打开界面
+    /// Mutual 从打开界面的栈中从后往前关闭UIConfig中配置的互斥面板
+    /// Hungup 从打开界面的栈中从后往前挂起UIConfig中配置的挂起面板
+    /// 原则：同一个界面同时只存在一个
+    /// 如果要打开的界面已经打开了，例：打开界面 A，目前打开的界面顺
+    /// 序为 A-B-C-D，则依次从栈中取出 D、C、B 并关闭，然后刷新界面A
+    /// 为什么？避免出现 A-B-C-D-A-B-C-D-A-B-C-D 此类无限循环的界面
+    /// </summary>
     public void Open(UIPlaneType type, IUIDataBase data)
     {
         Mutual(type);
         Hungup(type);
-        UIPlaneInfo info = _uiInfoController.GetPlaneInfo(type);
+        UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
+        if (null != info)
+        {
+            UIPlaneInfo lastInfo = _uiInfoController.LastOpenPlaneInfo();
+            while (lastInfo.Type != type)
+            {
+                Close(lastInfo.Type);
+                lastInfo = _uiInfoController.LastOpenPlaneInfo();
+            }
+        }
+        Open(info, type, data);
+    }
+
+    /// <summary>
+    /// 打开界面
+    /// Mutual 从打开界面的栈中从后往前关闭UIConfig中配置的互斥面板
+    /// Hungup 从打开界面的栈中从后往前挂起UIConfig中配置的挂起面板
+    /// 原则：同一个界面同时只存在一个
+    /// 如果要打开的界面已经打开了，例：打开界面 A，目前打开的界面顺
+    /// 序为 A-B-C-D，则刷新界面A
+    /// </summary>
+    public void OpenOrRefresh(UIPlaneType type, IUIDataBase data)
+    {
+        Mutual(type);
+        Hungup(type);
+        UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
+        Open(info, type, data);
+    }
+
+    private void Open(UIPlaneInfo info, UIPlaneType type, IUIDataBase data)
+    {
         if (null == info)
         {
-            UIBasePlane plane = LoadPanel(type);
-            plane.SetPlaneType(type);
-            info = new UIPlaneInfo(type, InstanceID(), plane);
-            _uiInfoController.AddInfo(info);
+            info = _uiInfoController.GetRecyclePlaneInfo(type);
+            if (null == info)
+            {
+                UIBasePlane plane = LoadPanel(type);
+                plane.SetPlaneType(type);
+                info = new UIPlaneInfo(type, InstanceID(), plane);
+                _uiInfoController.AddOpenInfo(info);
+            }
         }
+        if (!info.Plane.Tr.gameObject.activeInHierarchy)
+        {
+            info.Plane.Tr.gameObject.SetActive(true);
+        }
+        info.IsRecycle = false;
         info.Plane.OnEnter(data);
     }
 
     public void Close(UIPlaneType type)
     {
-        UIPlaneInfo info = _uiInfoController.GetPlaneInfo(type);
+        UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
         if (null != info)
         {
-            GameObject.Destroy(info.Plane.Tr.gameObject);
+            info.IsRecycle = true;
+            info.RecycleTime = (int)Time.realtimeSinceStartup;
             info.Plane.Exit();
-            _uiInfoController.Remove(info);
+            info.Plane.Tr.gameObject.SetActive(false);
+            _uiInfoController.RemoveCloseInfo(info);
         }
     }
 
@@ -114,7 +165,7 @@ public class UIManager
 
     public bool IsOpen(UIPlaneType type)
     {
-        UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
+        UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
         return null != info;
     }
 

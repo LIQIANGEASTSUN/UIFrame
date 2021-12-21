@@ -43,7 +43,7 @@ public class UIConfigController
     // 注册互斥面板
     private void RegisterMutual()
     {
-        AddMutual(UIPlaneType.Backpacker, new HashSet<UIPlaneType>() { UIPlaneType.Shop });
+        //AddMutual(UIPlaneType.Backpacker, new HashSet<UIPlaneType>() { UIPlaneType.Shop });
     }
 
 }
