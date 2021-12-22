@@ -11,8 +11,9 @@ public class UIBackpackerPlane : UIBasePlane
     private UIBackpackerView _backpackerView;
     private UIBackpackerModel _backpackerModel;
 
-    public override void Init()
+    public override void Init(UIPlaneType type)
     {
+        base.Init(type);
         View = new UIBackpackerView();
         Model = new UIBackpackerModel();
     }

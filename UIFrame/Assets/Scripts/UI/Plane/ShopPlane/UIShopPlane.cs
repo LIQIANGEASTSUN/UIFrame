@@ -7,8 +7,9 @@ public class UIShopPlane : UIBasePlane
     private UIShopView _uiShopView;
     private UIShopModel _uiShopModel;
 
-    public override void Init()
+    public override void Init(UIPlaneType type)
     {
+        base.Init(type);
         View = new UIShopView();
         Model = new UIShopModel();
     }

@@ -10,12 +10,11 @@ public abstract class UIBasePlane : IUIController
     private IUIView _view;
     private IUIModel _model;
 
-    public void SetPlaneType(UIPlaneType type)
+    public virtual void Init(UIPlaneType type)
     {
         _planeType = type;
+        Debug.LogError("Init:" + type);
     }
-
-    public abstract void Init();
 
     public virtual void OnEnter(IUIDataBase data)
     {

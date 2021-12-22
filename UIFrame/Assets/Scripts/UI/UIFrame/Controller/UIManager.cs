@@ -89,7 +89,7 @@ public class UIManager
             if (null == info)
             {
                 UIBasePlane plane = LoadPanel(type);
-                plane.SetPlaneType(type);
+                plane.Init(type);
                 info = new UIPlaneInfo(type, InstanceID(), plane);
             }
             _uiInfoController.AddOpenInfo(info);

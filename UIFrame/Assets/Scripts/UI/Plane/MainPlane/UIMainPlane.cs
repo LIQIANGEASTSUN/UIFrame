@@ -7,8 +7,9 @@ public class UIMainPlane : UIBasePlane
     private UIMainView _mainView;
     private UIMainModel _mainModel;
 
-    public override void Init()
+    public override void Init(UIPlaneType type)
     {
+        base.Init(type);
         View = new UIMainView();
         Model = new UIMainModel();
     }
