@@ -45,9 +45,9 @@ public class UIConfigController
     // 注册面板信息
     private void RegisterPlaneInfo()
     {
-        AddPlaneInfo(UIPlaneType.Main, new UIMainView(), "UIMainView");
-        AddPlaneInfo(UIPlaneType.Shop, new UIShopView(), "UIShopView");
-        AddPlaneInfo(UIPlaneType.Backpacker, new UIBackpackerView(), "UIBackpackerView");
+        AddPlaneInfo(UIPlaneType.Main, new UIMainPlane(), "UIMainView");
+        AddPlaneInfo(UIPlaneType.Shop, new UIShopPlane(), "UIShopView");
+        AddPlaneInfo(UIPlaneType.Backpacker, new UIBackpackerPlane(), "UIBackpackerView");
     }
 
     // 注册互斥面板

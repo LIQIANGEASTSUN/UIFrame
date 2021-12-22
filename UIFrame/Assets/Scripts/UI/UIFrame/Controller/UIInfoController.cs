@@ -60,7 +60,10 @@ public class UIInfoController
     public UIPlaneInfo GetRecyclePlaneInfo(UIPlaneType type)
     {
         UIPlaneInfo info = null;
-        _unUseDic.TryGetValue(type, out info);
+        if (_unUseDic.TryGetValue(type, out info))
+        {
+            _unUseDic.Remove(type);
+        }
         return info;
     }
 

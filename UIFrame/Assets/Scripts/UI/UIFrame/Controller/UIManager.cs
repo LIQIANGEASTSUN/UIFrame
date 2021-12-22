@@ -91,8 +91,8 @@ public class UIManager
                 UIBasePlane plane = LoadPanel(type);
                 plane.SetPlaneType(type);
                 info = new UIPlaneInfo(type, InstanceID(), plane);
-                _uiInfoController.AddOpenInfo(info);
             }
+            _uiInfoController.AddOpenInfo(info);
         }
         if (!info.Plane.Tr.gameObject.activeInHierarchy)
         {

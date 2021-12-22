@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class UIBasePlane
+public abstract class UIBasePlane : IUIController
 {
     protected UIPlaneType _planeType;
     protected Transform _tr;
     protected IUIDataBase _data;
+    protected IUIView _view;
+    protected IUIModel _model;
 
     public void SetPlaneType(UIPlaneType type)
     {
@@ -16,6 +18,8 @@ public abstract class UIBasePlane
     public virtual void OnEnter(IUIDataBase data)
     {
         _data = data;
+        View.Init(_tr, this);
+        Model.Init(data);
         Debug.LogError("OnEnter:" + _planeType);
     }
 
@@ -54,4 +58,13 @@ public abstract class UIBasePlane
         set { _tr = value; }
     }
 
+    protected abstract IUIView View
+    {
+        get;
+    }
+
+    protected abstract IUIModel Model
+    {
+        get;
+    }
 }

@@ -4,32 +4,29 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 背包界面
+/// 背包界面：View
 /// </summary>
-public class UIBackpackerView : UIBasePlane
+public class UIBackpackerView : IUIView
 {
+    private Transform _tr;
+    private IUIController _uiController;
+    private UIBackpackerPlane UIBackpackerPlane;
+
     private Button _closeBtn;
     private Button _backspaceBtn;
-    public override void OnEnter(IUIDataBase data)
+
+    public void Init(Transform tr, IUIController controller)
     {
-        base.OnEnter(data);
+        _tr = tr;
+        _uiController = controller;
+        UIBackpackerPlane = controller as UIBackpackerPlane;
 
         _closeBtn = _tr.Find("CloseBtn").GetComponent<Button>();
-        _closeBtn.onClick.AddListener(CloseOnClick);
+        _closeBtn.onClick.RemoveAllListeners();
+        _closeBtn.onClick.AddListener(UIBackpackerPlane.CloseOnClick);
 
         _backspaceBtn = _tr.Find("BackBtn").GetComponent<Button>();
-        _backspaceBtn.onClick.AddListener(BackOnClick);
-    }
-
-    private void CloseOnClick()
-    {
-        Close();
-    }
-
-    // 返回按钮
-    private void BackOnClick()
-    {
-        Close();
-        Back();
+        _backspaceBtn.onClick.RemoveAllListeners();
+        _backspaceBtn.onClick.AddListener(UIBackpackerPlane.BackOnClick);
     }
 }
