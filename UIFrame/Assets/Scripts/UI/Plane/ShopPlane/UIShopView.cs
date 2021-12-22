@@ -38,5 +38,9 @@ public class UIShopView : IUIView
         _backpackerBtn2 = _tr.Find("BackpackerBtn2").GetComponent<Button>();
         _backpackerBtn2.onClick.RemoveAllListeners();
         _backpackerBtn2.onClick.AddListener(UIShopPlane.BackpackerOnClick2);
+
+        Debug.LogError("UIShopView");
     }
+
+
 }

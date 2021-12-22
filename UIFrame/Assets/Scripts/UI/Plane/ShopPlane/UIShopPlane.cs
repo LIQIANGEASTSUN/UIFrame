@@ -6,28 +6,11 @@ public class UIShopPlane : UIBasePlane
 {
     private UIShopView _uiShopView;
     private UIShopModel _uiShopModel;
-    protected override IUIView View
-    {
-        get
-        {
-            if (null == _view)
-            {
-                _view = new UIShopView();
-            }
-            return _view;
-        }
-    }
 
-    protected override IUIModel Model
+    public override void Init()
     {
-        get
-        {
-            if (null == _model)
-            {
-                _model = new UIShopModel();
-            }
-            return _model;
-        }
+        View = new UIShopView();
+        Model = new UIShopModel();
     }
 
     public override void OnEnter(IUIDataBase data)

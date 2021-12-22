@@ -11,28 +11,10 @@ public class UIBackpackerPlane : UIBasePlane
     private UIBackpackerView _backpackerView;
     private UIBackpackerModel _backpackerModel;
 
-    protected override IUIView View
+    public override void Init()
     {
-        get
-        {
-            if (null == _view)
-            {
-                _view = new UIBackpackerView();
-            }
-            return _view;
-        }
-    }
-
-    protected override IUIModel Model
-    {
-        get
-        {
-            if (null == _model)
-            {
-                _model = new UIBackpackerModel();
-            }
-            return _model;
-        }
+        View = new UIBackpackerView();
+        Model = new UIBackpackerModel();
     }
 
     public override void OnEnter(IUIDataBase data)

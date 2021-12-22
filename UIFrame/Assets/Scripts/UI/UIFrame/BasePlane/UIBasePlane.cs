@@ -7,13 +7,15 @@ public abstract class UIBasePlane : IUIController
     protected UIPlaneType _planeType;
     protected Transform _tr;
     protected IUIDataBase _data;
-    protected IUIView _view;
-    protected IUIModel _model;
+    private IUIView _view;
+    private IUIModel _model;
 
     public void SetPlaneType(UIPlaneType type)
     {
         _planeType = type;
     }
+
+    public abstract void Init();
 
     public virtual void OnEnter(IUIDataBase data)
     {
@@ -58,13 +60,15 @@ public abstract class UIBasePlane : IUIController
         set { _tr = value; }
     }
 
-    protected abstract IUIView View
+    protected IUIView View
     {
-        get;
+        get { return _view; }
+        set { _view = value; }
     }
 
-    protected abstract IUIModel Model
+    protected IUIModel Model
     {
-        get;
+        get { return _model; }
+        set { _model = value; }
     }
 }

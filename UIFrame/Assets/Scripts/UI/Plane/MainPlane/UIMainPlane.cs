@@ -7,36 +7,18 @@ public class UIMainPlane : UIBasePlane
     private UIMainView _mainView;
     private UIMainModel _mainModel;
 
-    protected override IUIView View
+    public override void Init()
     {
-        get
-        {
-            if (null == _view)
-            {
-                _view = new UIMainView();
-            }
-            return _view;
-        }
-    }
-
-    protected override IUIModel Model
-    {
-        get
-        {
-            if (null == _model)
-            {
-                _model = new UIMainModel();
-            }
-            return _model;
-        }
+        View = new UIMainView();
+        Model = new UIMainModel();
     }
 
     public override void OnEnter(IUIDataBase data)
     {
         base.OnEnter(data);
 
-        _mainView = _view as UIMainView;
-        _mainModel = _model as UIMainModel;
+        _mainView = View as UIMainView;
+        _mainModel = Model as UIMainModel;
     }
 
     public void CloseOnClick()
