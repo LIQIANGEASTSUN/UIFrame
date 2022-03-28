@@ -9,8 +9,7 @@ public class UIInfoController
     private Stack<int> _stack;
     // 每个界面只能存在一个实例，如依次打开了 A-B-C-D 想要再次打开A界面
     // 则从后往前依次关闭 D、C、B 界面，然后刷新A界面
-    private Dictionary<UIPlaneType, int> _planeDic;
-    private Dictionary<int, UIPlaneInfo> _planeInfoDic;
+    private List<UIPlaneInfo> _planeInfoList = new List<UIPlaneInfo>();
     #endregion
 
     #region UnUse
@@ -21,19 +20,34 @@ public class UIInfoController
     public UIInfoController()
     {
         _stack = new Stack<int>();
-        _planeDic = new Dictionary<UIPlaneType, int>();
-        _planeInfoDic = new Dictionary<int, UIPlaneInfo>();
+        _planeInfoList = new List<UIPlaneInfo>();
         _unUseDic = new Dictionary<UIPlaneType, UIPlaneInfo>();
     }
 
     public UIPlaneInfo GetOpenPlaneInfo(UIPlaneType type)
     {
         UIPlaneInfo info = null;
-        int instanceID = -1;
-        if (   !_planeDic.TryGetValue(type, out instanceID) 
-            || !_planeInfoDic.TryGetValue(instanceID, out info))
+        for (int i = _planeInfoList.Count - 1; i >= 0; --i)
         {
-            return info;
+            if (_planeInfoList[i].Type == type)
+            {
+                info = _planeInfoList[i];
+                break;
+            }
+        }
+        return info;
+    }
+
+    public UIPlaneInfo GetOpenPlaneInfo(int instanceID)
+    {
+        UIPlaneInfo info = null;
+        for (int i = _planeInfoList.Count - 1; i >= 0; i--)
+        {
+            if (_planeInfoList[i].InstanceID == instanceID)
+            {
+                info = _planeInfoList[i];
+                break;
+            }
         }
         return info;
     }
@@ -41,8 +55,7 @@ public class UIInfoController
     public void AddOpenInfo(UIPlaneInfo info)
     {
         _stack.Push(info.InstanceID);
-        _planeDic.Add(info.Type, info.InstanceID);
-        _planeInfoDic.Add(info.InstanceID, info);
+        _planeInfoList.Add(info);
     }
 
     public void RemoveCloseInfo(UIPlaneInfo info)
@@ -51,8 +64,15 @@ public class UIInfoController
         {
             _stack.Pop();
         }
-        _planeDic.Remove(info.Type);
-        _planeInfoDic.Remove(info.InstanceID);
+
+        for (int i = _planeInfoList.Count - 1; i >= 0; i--)
+        {
+            if (_planeInfoList[i].InstanceID == info.InstanceID)
+            {
+                _planeInfoList.RemoveAt(i);
+                break;
+            }
+        }
 
         _unUseDic.Add(info.Type, info);
     }
@@ -73,7 +93,8 @@ public class UIInfoController
         while (_stack.Count > 0)
         {
             int instanceID = _stack.Peek();
-            if (_planeInfoDic.TryGetValue(instanceID, out info))
+            info = GetOpenPlaneInfo(instanceID);
+            if (null != info)
             {
                 break;
             }
@@ -82,11 +103,11 @@ public class UIInfoController
         return info;
     }
  
-    public IEnumerable<UIBasePlane> GetIEnumerable()
+    public List<UIPlaneInfo> PlaneInfoList
     {
-        foreach(var kv in _planeInfoDic)
+        get
         {
-            yield return kv.Value.Plane;
+            return _planeInfoList;
         }
     }
 
@@ -114,6 +135,7 @@ public class UIInfoController
         {
             UIPlaneType type = _destoryList[i];
             UIPlaneInfo info = _unUseDic[type];
+            info.Plane.Destroy();
             GameObject.Destroy(info.Plane.Tr.gameObject);
             _unUseDic.Remove(type);
             _destoryList.RemoveAt(i);

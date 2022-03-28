@@ -15,26 +15,26 @@ public class UIBackpackerPlane : UIBasePlane
     {
         base.Init(type);
         View = new UIBackpackerView();
+        _backpackerView = View as UIBackpackerView;
+
         Model = new UIBackpackerModel();
+        _backpackerModel = Model as UIBackpackerModel;
     }
 
-    public override void OnEnter(IUIDataBase data)
+    public override void Open(IUIDataBase data)
     {
-        base.OnEnter(data);
-
-        _backpackerView = View as UIBackpackerView;
-        _backpackerModel = Model as UIBackpackerModel;
+        base.Open(data);
     }
 
     public void CloseOnClick()
     {
-        Close();
+        CloseSelf();
     }
 
     // 返回按钮
     public void BackOnClick()
     {
-        Close();
+        CloseSelf();
         Back();
     }
 }

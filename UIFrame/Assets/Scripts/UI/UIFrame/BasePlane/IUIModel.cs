@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IUIModel
 {
-    void Init(IUIDataBase data);
+    void Open(IUIDataBase data);
 }

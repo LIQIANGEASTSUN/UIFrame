@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class UIManager
+public class UIManager : SingletonObject<UIManager>
 {
-    public static UIManager Instance;
-
     private int _instanceID = 0;
     private UIInfoController _uiInfoController;
     private UIConfigController _uiConfigController;
@@ -12,29 +10,22 @@ public class UIManager
     private Transform _root;
     private Dictionary<string, Transform> _layerDic;
 
-    public static UIManager GetInstance()
-    {
-        if (null == Instance)
-        {
-            Instance = new UIManager();
-        }
-        return Instance;
-    }
-
-    private UIManager()
+    public UIManager()
     {
         _uiInfoController = new UIInfoController();
         _uiConfigController = new UIConfigController();
-        _root = GameObject.Find("Canvas").transform;
+        _root = GameObject.Find("UIRoot").transform;
         _layerDic = new Dictionary<string, Transform>();
     }
 
     public void Update()
     {
-        IEnumerable<UIBasePlane> ie = _uiInfoController.GetIEnumerable();
-        foreach(var plane in ie)
+        for (int i = _uiInfoController.PlaneInfoList.Count - 1; i >= 0; --i)
         {
-            plane.Update();
+            if (_uiInfoController.PlaneInfoList[i].Plane.LoadComplete())
+            {
+                _uiInfoController.PlaneInfoList[i].Plane.Update();
+            }
         }
         _uiInfoController.Update();
     }
@@ -83,23 +74,26 @@ public class UIManager
 
     private void Open(UIPlaneInfo info, UIPlaneType type, IUIDataBase data)
     {
+        if (null != info)
+        {
+            if (info.Plane.LoadComplete())
+            {
+                info.Plane.Open(data);
+            }
+        }
         if (null == info)
         {
             info = _uiInfoController.GetRecyclePlaneInfo(type);
             if (null == info)
             {
-                UIBasePlane plane = LoadPanel(type);
+                UIBasePlane plane = LoadPanel(type, data);
                 plane.Init(type);
                 info = new UIPlaneInfo(type, InstanceID(), plane);
             }
             _uiInfoController.AddOpenInfo(info);
         }
-        if (!info.Plane.Tr.gameObject.activeInHierarchy)
-        {
-            info.Plane.Tr.gameObject.SetActive(true);
-        }
+
         info.IsRecycle = false;
-        info.Plane.OnEnter(data);
     }
 
     public void Close(UIPlaneType type)
@@ -109,7 +103,7 @@ public class UIManager
         {
             info.IsRecycle = true;
             info.RecycleTime = (int)Time.realtimeSinceStartup;
-            info.Plane.Exit();
+            info.Plane.Close();
             info.Plane.Tr.gameObject.SetActive(false);
             _uiInfoController.RemoveCloseInfo(info);
         }
@@ -168,19 +162,13 @@ public class UIManager
         return null != info;
     }
 
-    private UIBasePlane LoadPanel(UIPlaneType type)
+    private UIBasePlane LoadPanel(UIPlaneType type, IUIDataBase data)
     {
         UIConfig uiConfig = _uiConfigController.GetConfig(type);
         if (null == uiConfig.BasePlane.Tr)
         {
-            GameObject go = Resources.Load<GameObject>(uiConfig.AssetName);
             Transform layerTr = LayerTransform(uiConfig.Layer);
-            GameObject instance = GameObject.Instantiate(go, layerTr);
-            instance.transform.SetAsLastSibling();
-            instance.transform.localScale = Vector3.one;
-            instance.transform.rotation = Quaternion.identity;
-            instance.transform.localPosition = Vector3.zero;
-            uiConfig.BasePlane.Tr = instance.transform;
+            UIPlaneGoLoad uIPlaneGoLoad = new UIPlaneGoLoad(uiConfig, layerTr, data);
         }
 
         return uiConfig.BasePlane;
@@ -200,5 +188,34 @@ public class UIManager
     private int InstanceID()
     {
         return ++_instanceID;
+    }
+}
+
+public struct UIPlaneGoLoad
+{
+    private UIConfig _uiConfig;
+    private Transform _layerTr;
+    private IUIDataBase _data;
+    public UIPlaneGoLoad(UIConfig uiConfig, Transform layerTr, IUIDataBase data)
+    {
+        _uiConfig = uiConfig;
+        _layerTr = layerTr;
+        _data = data;
+
+        ResourceRequest resourceRequest = Resources.LoadAsync<GameObject>(uiConfig.AssetName);
+        resourceRequest.completed += LoadComplete;
+    }
+
+    private void LoadComplete(AsyncOperation asyncOperation)
+    {
+        ResourceRequest resourceRequest = asyncOperation as ResourceRequest;
+        GameObject g = resourceRequest.asset as GameObject;
+        GameObject instance = GameObject.Instantiate( g, _layerTr);
+        instance.transform.SetAsLastSibling();
+        instance.transform.localScale = Vector3.one;
+        instance.transform.rotation = Quaternion.identity;
+        instance.transform.localPosition = Vector3.zero;
+        _uiConfig.BasePlane.SetTransform(instance.transform);
+        _uiConfig.BasePlane.Open(_data);
     }
 }

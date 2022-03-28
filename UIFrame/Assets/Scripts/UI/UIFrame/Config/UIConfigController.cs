@@ -18,9 +18,9 @@ public class UIConfigController
         return _configDic[type];
     }
 
-    private void AddPlaneInfo(UIPlaneType type, UIBasePlane basePlane, string assetName)
+    private void AddPlaneInfo(UIPlaneType type, UIBasePlane basePlane, string assetName, string layerName)
     {
-        UIConfig uiConfig = new UIConfig(type, basePlane, assetName, "MainLayer");
+        UIConfig uiConfig = new UIConfig(type, basePlane, assetName, layerName);
         _configDic.Add(type, uiConfig);
     }
 
@@ -45,9 +45,9 @@ public class UIConfigController
     // 注册面板信息
     private void RegisterPlaneInfo()
     {
-        AddPlaneInfo(UIPlaneType.Main, new UIMainPlane(), "UIMainView");
-        AddPlaneInfo(UIPlaneType.Shop, new UIShopPlane(), "UIShopView");
-        AddPlaneInfo(UIPlaneType.Backpacker, new UIBackpackerPlane(), "UIBackpackerView");
+        AddPlaneInfo(UIPlaneType.Main, new UIMainPlane(), "UIMainView", "MainLayer");
+        AddPlaneInfo(UIPlaneType.Shop, new UIShopPlane(), "UIShopView", "MainLayer");
+        AddPlaneInfo(UIPlaneType.Backpacker, new UIBackpackerPlane(), "UIBackpackerView", "MainLayer");
     }
 
     // 注册互斥面板

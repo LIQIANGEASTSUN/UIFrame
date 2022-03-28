@@ -11,20 +11,20 @@ public class UIMainPlane : UIBasePlane
     {
         base.Init(type);
         View = new UIMainView();
+        _mainView = View as UIMainView;
+
         Model = new UIMainModel();
+        _mainModel = Model as UIMainModel;
     }
 
-    public override void OnEnter(IUIDataBase data)
+    public override void Open(IUIDataBase data)
     {
-        base.OnEnter(data);
-
-        _mainView = View as UIMainView;
-        _mainModel = Model as UIMainModel;
+        base.Open(data);
     }
 
     public void CloseOnClick()
     {
-        Close();
+        CloseSelf();
     }
 
     public void ShopOnClick()

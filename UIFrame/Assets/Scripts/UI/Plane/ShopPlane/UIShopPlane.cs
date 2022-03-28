@@ -11,19 +11,19 @@ public class UIShopPlane : UIBasePlane
     {
         base.Init(type);
         View = new UIShopView();
+        _uiShopView = View as UIShopView;
         Model = new UIShopModel();
+        _uiShopModel = Model as UIShopModel;
     }
 
-    public override void OnEnter(IUIDataBase data)
+    public override void Open(IUIDataBase data)
     {
-        base.OnEnter(data);
-        _uiShopView = View as UIShopView;
-        _uiShopModel = Model as UIShopModel;
+        base.Open(data);
     }
 
     public void CloseOnClick()
     {
-        Close();
+        CloseSelf();
     }
 
     // 返回按钮

@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IUIView
 {
 
-    void Init(Transform tr, IUIController controller);
+    void Open(Transform tr, IUIController controller);
 
 }

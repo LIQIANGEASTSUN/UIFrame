@@ -6,6 +6,7 @@ public abstract class UIBasePlane : IUIController
 {
     protected UIPlaneType _planeType;
     protected Transform _tr;
+    protected bool _trLoadComplete;
     protected IUIDataBase _data;
     private IUIView _view;
     private IUIModel _model;
@@ -13,20 +14,22 @@ public abstract class UIBasePlane : IUIController
     public virtual void Init(UIPlaneType type)
     {
         _planeType = type;
-        Debug.LogError("Init:" + type);
     }
 
-    public virtual void OnEnter(IUIDataBase data)
+    public virtual void Open(IUIDataBase data)
     {
         _data = data;
-        View.Init(_tr, this);
-        Model.Init(data);
-        Debug.LogError("OnEnter:" + _planeType);
+        if (!_tr.gameObject.activeInHierarchy)
+        {
+            _tr.gameObject.SetActive(true);
+        }
+
+        View.Open(_tr, this);
+        Model.Open(data);
     }
 
-    public virtual void Exit()
+    public virtual void Close()
     {
-        Debug.LogError("Exit:" + _planeType);
     }
 
     public virtual void Update()
@@ -35,15 +38,13 @@ public abstract class UIBasePlane : IUIController
 
     public virtual void HangUp()
     {
-        Debug.LogError("HangUp:" + _planeType);
     }
 
     public virtual void Resume()
     {
-        Debug.LogError("Resume:" + _planeType);
     }
 
-    public void Close()
+    public void CloseSelf()
     {
         UIManager.GetInstance().Close(_planeType);
     }
@@ -53,15 +54,32 @@ public abstract class UIBasePlane : IUIController
         UIManager.GetInstance().Back();
     }
 
+    public virtual void Destroy()
+    {
+
+    }
+
+    public void SetTransform(Transform tr)
+    {
+        _tr = tr;
+        _trLoadComplete = true;
+    }
+
     public Transform Tr
     {
         get { return _tr; }
-        set { _tr = value; }
+    }
+
+    public bool LoadComplete()
+    {
+        return _trLoadComplete;
     }
 
     protected IUIView View
     {
-        get { return _view; }
+        get {
+            return _view;
+        }
         set { _view = value; }
     }
 

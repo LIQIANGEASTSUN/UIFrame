@@ -17,7 +17,7 @@ public class UIShopView : IUIView
     private Button _backpackerBtn1;
     private Button _backpackerBtn2;
 
-    public void Init(Transform tr, IUIController controller)
+    public void Open(Transform tr, IUIController controller)
     {
         _tr = tr;
         _uiController = controller;

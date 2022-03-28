@@ -15,7 +15,7 @@ public class UIMainView : IUIView
     private Button _closeBtn;
     private Button _shopBtn;
 
-    public void Init(Transform tr, IUIController controller)
+    public void Open(Transform tr, IUIController controller)
     {
         _tr = tr;
         _uiController = controller;
