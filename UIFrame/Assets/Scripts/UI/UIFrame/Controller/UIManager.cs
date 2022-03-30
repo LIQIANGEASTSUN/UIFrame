@@ -24,7 +24,9 @@ public class UIManager : SingletonObject<UIManager>
         {
             if (_uiInfoController.PlaneInfoList[i].Plane.LoadComplete())
             {
+                Debug.LogError("Update Begin:" + _uiInfoController.PlaneInfoList[i].Plane.GetType().Name);
                 _uiInfoController.PlaneInfoList[i].Plane.Update();
+                Debug.LogError("Update End:" + _uiInfoController.PlaneInfoList[i].Plane.GetType().Name);
             }
         }
         _uiInfoController.Update();
@@ -74,22 +76,25 @@ public class UIManager : SingletonObject<UIManager>
 
     private void Open(UIPlaneInfo info, UIPlaneType type, IUIDataBase data)
     {
+        if (null == info)
+        {
+            info = _uiInfoController.GetRecyclePlaneInfo(type);
+        }
+
         if (null != info)
         {
+            info.Plane.Tr.gameObject.SetActive(true);
             if (info.Plane.LoadComplete())
             {
                 info.Plane.Open(data);
             }
+            _uiInfoController.AddOpenInfo(info);
         }
-        if (null == info)
+        else
         {
-            info = _uiInfoController.GetRecyclePlaneInfo(type);
-            if (null == info)
-            {
-                UIBasePlane plane = LoadPanel(type, data);
-                plane.Init(type);
-                info = new UIPlaneInfo(type, InstanceID(), plane);
-            }
+            UIBasePlane plane = LoadPanel(type, data);
+            plane.Init(type);
+            info = new UIPlaneInfo(type, InstanceID(), plane);
             _uiInfoController.AddOpenInfo(info);
         }
 
@@ -101,6 +106,7 @@ public class UIManager : SingletonObject<UIManager>
         UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
         if (null != info)
         {
+            Debug.LogError("Close:" + type);
             info.IsRecycle = true;
             info.RecycleTime = (int)Time.realtimeSinceStartup;
             info.Plane.Close();
@@ -202,15 +208,12 @@ public struct UIPlaneGoLoad
         _layerTr = layerTr;
         _data = data;
 
-        ResourceRequest resourceRequest = Resources.LoadAsync<GameObject>(uiConfig.AssetName);
-        resourceRequest.completed += LoadComplete;
+        ResourcesManager.GetInstance().LoadAsync<GameObject>(uiConfig.AssetName, LoadComplete);
     }
 
-    private void LoadComplete(AsyncOperation asyncOperation)
+    private void LoadComplete(GameObject go)
     {
-        ResourceRequest resourceRequest = asyncOperation as ResourceRequest;
-        GameObject g = resourceRequest.asset as GameObject;
-        GameObject instance = GameObject.Instantiate( g, _layerTr);
+        GameObject instance = GameObject.Instantiate(go, _layerTr);
         instance.transform.SetAsLastSibling();
         instance.transform.localScale = Vector3.one;
         instance.transform.rotation = Quaternion.identity;
