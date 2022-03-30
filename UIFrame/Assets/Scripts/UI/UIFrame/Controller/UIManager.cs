@@ -24,9 +24,7 @@ public class UIManager : SingletonObject<UIManager>
         {
             if (_uiInfoController.PlaneInfoList[i].Plane.LoadComplete())
             {
-                Debug.LogError("Update Begin:" + _uiInfoController.PlaneInfoList[i].Plane.GetType().Name);
                 _uiInfoController.PlaneInfoList[i].Plane.Update();
-                Debug.LogError("Update End:" + _uiInfoController.PlaneInfoList[i].Plane.GetType().Name);
             }
         }
         _uiInfoController.Update();
@@ -208,12 +206,15 @@ public struct UIPlaneGoLoad
         _layerTr = layerTr;
         _data = data;
 
-        ResourcesManager.GetInstance().LoadAsync<GameObject>(uiConfig.AssetName, LoadComplete);
+        ResourceRequest resourceRequest = Resources.LoadAsync<GameObject>(uiConfig.AssetName);
+        resourceRequest.completed += LoadComplete;
     }
 
-    private void LoadComplete(GameObject go)
+    private void LoadComplete(AsyncOperation asyncOperation)
     {
-        GameObject instance = GameObject.Instantiate(go, _layerTr);
+        ResourceRequest resourceRequest = asyncOperation as ResourceRequest;
+        GameObject g = resourceRequest.asset as GameObject;
+        GameObject instance = GameObject.Instantiate(g, _layerTr);
         instance.transform.SetAsLastSibling();
         instance.transform.localScale = Vector3.one;
         instance.transform.rotation = Quaternion.identity;
