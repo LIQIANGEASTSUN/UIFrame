@@ -104,7 +104,6 @@ public class UIManager : SingletonObject<UIManager>
         UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
         if (null != info)
         {
-            Debug.LogError("Close:" + type);
             info.IsRecycle = true;
             info.RecycleTime = (int)Time.realtimeSinceStartup;
             info.Plane.Close();
