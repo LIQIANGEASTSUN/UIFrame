@@ -70,7 +70,6 @@ public class LoopScrollView : MonoBehaviour
 
     public void GoToIndex(int index)
     {
-
+        _uIScrollBase.GoToIndex(index);
     }
-
 }

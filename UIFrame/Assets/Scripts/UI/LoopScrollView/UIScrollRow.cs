@@ -10,6 +10,7 @@ offsetMax ： 对应Right、Top
 /// </summary>
 public class UIScrollRow : UIScrollBase
 {
+    private int _totalCol;
     public UIScrollRow(LoopScrollView loopScrollView) : base(loopScrollView)
     {
 
@@ -24,9 +25,9 @@ public class UIScrollRow : UIScrollBase
 
     protected override void CalculateContent(int count)
     {
-        int totalCol = Mathf.CeilToInt(count * 1.0f / _loopScrollView._fixedCount);
+        _totalCol = TotalCol(count);
 
-        float width = _loopScrollView._cellSize.x * totalCol + _loopScrollView._spacing.x * (totalCol - 1);
+        float width = _loopScrollView._cellSize.x * _totalCol + _loopScrollView._spacing.x * (_totalCol - 1);
         float height = _loopScrollView.ScrollTR.sizeDelta.y;
 
         Vector2 sizeDelta = new Vector2(width, height);
@@ -45,6 +46,12 @@ public class UIScrollRow : UIScrollBase
         _loopScrollView.Rect.offsetMax = offsetMax;
     }
 
+    private int TotalCol(int count)
+    {
+        int totalCol = Mathf.CeilToInt(count * 1.0f / _loopScrollView._fixedCount);
+        return totalCol;
+    }
+
     protected override void IndexToRowCol(int index, ref int row, ref int col)
     {
         row = index % _loopScrollView._fixedCount;
@@ -59,7 +66,7 @@ public class UIScrollRow : UIScrollBase
         float startCol = OffsetXToCol(startX);
         float endCol = OffsetXToCol(endX);
 
-        Debug.LogError(startCol + "    " + endCol);
+        Debug.LogError(pos + "  " + startCol + "    " + endCol);
     }
 
     private float OffsetXToCol(float x)
@@ -69,5 +76,15 @@ public class UIScrollRow : UIScrollBase
         return col;
     }
 
+    public override void GoToIndex(int index)
+    {
+        int row = 0;
+        int col = 0;
+        IndexToRowCol(index, ref row, ref col);
+
+        float value = 1 - row * 1.0f / _totalCol;
+        Vector2 position = new Vector2(1, value);
+        _loopScrollView.SetScrollRectPos(position);
+    }
 
 }

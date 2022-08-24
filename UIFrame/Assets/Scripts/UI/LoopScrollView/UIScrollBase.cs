@@ -77,4 +77,6 @@ public abstract class UIScrollBase
 
     public abstract void ScrollChange(Vector2 pos);
 
+    public abstract void GoToIndex(int index);
+
 }

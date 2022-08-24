@@ -5,7 +5,7 @@
 /// </summary>
 public class UIScrollCol : UIScrollBase
 {
-
+    private int _totalRow;
     public UIScrollCol(LoopScrollView loopScrollView) : base(loopScrollView)
     {
 
@@ -20,10 +20,10 @@ public class UIScrollCol : UIScrollBase
 
     protected override void CalculateContent(int count)
     {
-        int totalRow = Mathf.CeilToInt(count * 1.0f / _loopScrollView._fixedCount);
+        _totalRow = TotalRow(count);
 
         float width = _loopScrollView.ScrollTR.sizeDelta.x;
-        float height = _loopScrollView._cellSize.y * totalRow + _loopScrollView._spacing.y * (totalRow - 1);
+        float height = _loopScrollView._cellSize.y * _totalRow + _loopScrollView._spacing.y * (_totalRow - 1);
 
         Vector2 sizeDelta = new Vector2(width, height);
         _loopScrollView.Rect.anchorMin = new Vector2(0, 1);
@@ -43,6 +43,12 @@ public class UIScrollCol : UIScrollBase
         col = index % _loopScrollView._fixedCount;
     }
 
+    private int TotalRow(int count)
+    {
+        int totalRow = Mathf.CeilToInt(count * 1.0f / _loopScrollView._fixedCount);
+        return totalRow;
+    }
+
     public override void ScrollChange(Vector2 pos)
     {
         float startY = _loopScrollView.Rect.anchoredPosition.y;
@@ -51,13 +57,24 @@ public class UIScrollCol : UIScrollBase
         float startRow = OffsetYToRow(startY);
         float endRow = OffsetYToRow(endY);
 
-        Debug.LogError(startRow + "    " + endRow);
+        Debug.LogError(pos + "   " + startRow + "    " + endRow);
     }
 
     private float OffsetYToRow(float y)
     {
         float row = (y ) / (_loopScrollView._cellSize.y + _loopScrollView._spacing.y);
         return row;
+    }
+
+    public override void GoToIndex(int index)
+    {
+        int row = 0;
+        int col = 0;
+        IndexToRowCol(index, ref row, ref col);
+
+        float value = 1 - row * 1.0f / _totalRow;
+        Vector2 position = new Vector2(1, value);
+        _loopScrollView.SetScrollRectPos(position);
     }
 
 }
