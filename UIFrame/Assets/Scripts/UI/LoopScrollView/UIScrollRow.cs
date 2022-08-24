@@ -53,7 +53,21 @@ public class UIScrollRow : UIScrollBase
 
     public override void ScrollChange(Vector2 pos)
     {
+        float startX = _loopScrollView.Rect.anchoredPosition.x;
+        float endX = startX - _loopScrollView.ScrollTR.sizeDelta.x;
 
+        float startCol = OffsetXToCol(startX);
+        float endCol = OffsetXToCol(endX);
+
+        Debug.LogError(startCol + "    " + endCol);
     }
+
+    private float OffsetXToCol(float x)
+    {
+        float col = (x) / (_loopScrollView._cellSize.x + _loopScrollView._spacing.x);
+        col *= -1;
+        return col;
+    }
+
 
 }

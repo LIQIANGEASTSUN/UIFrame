@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class UIScrollBase
 {
@@ -58,6 +59,9 @@ public abstract class UIScrollBase
             item.localRotation = Quaternion.identity;
             item.localPosition = Vector3.zero;
         }
+
+        Text text = item.Find("Text").GetComponent<Text>();
+        text.text = index.ToString();
 
         SetActive(item.gameObject, true);
         return item;

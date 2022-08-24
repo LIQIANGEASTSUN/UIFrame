@@ -56,7 +56,6 @@ public class UIScrollCol : UIScrollBase
 
     private float OffsetYToRow(float y)
     {
-        //float row = (y + _loopScrollView._top + 0.5f * _loopScrollView._cellSize.y) / (_loopScrollView._cellSize.y + _loopScrollView._spacing.y);
         float row = (y ) / (_loopScrollView._cellSize.y + _loopScrollView._spacing.y);
         return row;
     }
