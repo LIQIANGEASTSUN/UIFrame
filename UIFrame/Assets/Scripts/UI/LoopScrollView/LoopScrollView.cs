@@ -51,6 +51,7 @@ public class LoopScrollView : MonoBehaviour
 
     private void ScrollChange(Vector2 pos)
     {
+        _uIScrollBase.ScrollChange(pos);
     }
 
     public RectTransform Rect {

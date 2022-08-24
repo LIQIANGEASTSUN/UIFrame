@@ -51,4 +51,9 @@ public class UIScrollRow : UIScrollBase
         col = index / _loopScrollView._fixedCount;
     }
 
+    public override void ScrollChange(Vector2 pos)
+    {
+
+    }
+
 }

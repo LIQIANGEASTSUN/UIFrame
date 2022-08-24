@@ -43,4 +43,22 @@ public class UIScrollCol : UIScrollBase
         col = index % _loopScrollView._fixedCount;
     }
 
+    public override void ScrollChange(Vector2 pos)
+    {
+        float startY = _loopScrollView.Rect.anchoredPosition.y;
+        float endY = startY + _loopScrollView.ScrollTR.sizeDelta.y;
+
+        float startRow = OffsetYToRow(startY);
+        float endRow = OffsetYToRow(endY);
+
+        Debug.LogError(startRow + "    " + endRow);
+    }
+
+    private float OffsetYToRow(float y)
+    {
+        //float row = (y + _loopScrollView._top + 0.5f * _loopScrollView._cellSize.y) / (_loopScrollView._cellSize.y + _loopScrollView._spacing.y);
+        float row = (y ) / (_loopScrollView._cellSize.y + _loopScrollView._spacing.y);
+        return row;
+    }
+
 }

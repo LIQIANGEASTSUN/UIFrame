@@ -291,7 +291,7 @@ MonoBehaviour:
   _cellSize: {x: 100, y: 100}
   _spacing: {x: 20, y: 20}
   _fixedRowCol: 1
-  _fixedCount: 2
+  _fixedCount: 3
 --- !u!114 &415711524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1045,7 +1045,7 @@ MonoBehaviour:
   _cellSize: {x: 100, y: 100}
   _spacing: {x: 20, y: 20}
   _fixedRowCol: 0
-  _fixedCount: 2
+  _fixedCount: 3
 --- !u!1 &1447120034
 GameObject:
   m_ObjectHideFlags: 0

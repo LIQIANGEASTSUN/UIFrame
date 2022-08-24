@@ -12,7 +12,7 @@ public class TestLoop : MonoBehaviour
     {
         _loopScrollView = GetComponent<LoopScrollView>();
 
-        _loopScrollView.ItemCount(20);
+        _loopScrollView.ItemCount(130);
     }
 
     // Update is called once per frame
