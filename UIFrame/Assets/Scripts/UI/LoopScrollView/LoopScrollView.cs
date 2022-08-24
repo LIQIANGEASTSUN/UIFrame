@@ -51,7 +51,6 @@ public class LoopScrollView : MonoBehaviour
 
     private void ScrollChange(Vector2 pos)
     {
-        Debug.LogError(pos);
     }
 
     public RectTransform Rect {
@@ -69,7 +68,7 @@ public class LoopScrollView : MonoBehaviour
     }
 
     /*
-         private Vector2 lastPoint = Vector2.zero;
+    private Vector2 lastPoint = Vector2.zero;
     private void ScrollChange(Vector2 pos)
     {
         for (int i = 0; i < _itemList.Count; ++i)

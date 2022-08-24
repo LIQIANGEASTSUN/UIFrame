@@ -63,11 +63,6 @@ public abstract class UIScrollBase
         return item;
     }
 
-    protected void SetContentRect(Vector2 sizeDelta)
-    {
-
-    }
-
     protected void SetActive(GameObject go, bool value)
     {
         if (go.activeInHierarchy != value)
