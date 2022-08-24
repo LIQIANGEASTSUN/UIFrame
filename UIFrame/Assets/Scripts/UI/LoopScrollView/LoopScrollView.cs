@@ -31,11 +31,6 @@ public class LoopScrollView : MonoBehaviour
         CreateScroll();
     }
 
-    void Update()
-    {
-        
-    }
-
     public void ItemCount(int count)
     {
         Init();
@@ -54,39 +49,23 @@ public class LoopScrollView : MonoBehaviour
         }
     }
 
-    //private Vector2 lastPoint = Vector2.zero;
     private void ScrollChange(Vector2 pos)
     {
-        //for (int i = 0; i < _itemList.Count; ++i)
-        //{
-        //    //Transform child = _itemList[i];
-        //    //Vector2 screenPoint = PositionConvert.UIPointToScreenPoint(child.position);
-        //    //Vector2 localPos = PositionConvert.ScreenPointToUILocalPoint(_rectTransform, screenPoint);
-        //    //if (pos.y < lastPoint.y)  // 向上
-        //    //{
-        //    //    Up(child, localPos);
-        //    //}
-        //    //else   // 向下
-        //    //{
-        //    //    Down(child, localPos);
-        //    //}
-        //}
-
-        //lastPoint = pos;
+        Debug.LogError(pos);
     }
 
     public RectTransform Rect {
         get { return _rect; }
     }
 
-    public ScrollRect ScrollRect
-    {
-        get { return _scrollRect; }
-    }
-
     public RectTransform ScrollTR
     {
         get { return _scrollTR; }
+    }
+
+    public void SetScrollRectPos(Vector2 position)
+    {
+        _scrollRect.normalizedPosition = position;
     }
 
     /*

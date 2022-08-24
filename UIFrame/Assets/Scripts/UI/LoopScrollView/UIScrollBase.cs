@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIScrollBase
+public abstract class UIScrollBase
 {
     protected LoopScrollView _loopScrollView;
     protected int _count;
@@ -15,7 +15,31 @@ public class UIScrollBase
     public virtual void ItemCount(int count)
     {
         _count = count;
+
+        for (int i = 0; i < count; ++i)
+        {
+            Transform itemTr = GetItem(i);
+            Vector2 position = CalculateItemPosition(i);
+            RectTransform rect = itemTr.GetComponent<RectTransform>();
+            rect.sizeDelta = _loopScrollView._cellSize;
+            rect.anchoredPosition = position;
+        }
     }
+
+    protected abstract void CalculateContent(int count);
+
+    protected Vector2 CalculateItemPosition(int index)
+    {
+        int row = 0;
+        int col = 0;
+        IndexToRowCol(index, ref row, ref col);
+
+        Vector2 position = new Vector2(_loopScrollView._left, -_loopScrollView._top);
+        position.x += (col + 0.5f) * _loopScrollView._cellSize.x + col * _loopScrollView._spacing.x;
+        position.y -= (row + 0.5f) * _loopScrollView._cellSize.y + row * _loopScrollView._spacing.y;
+        return position;
+    }
+    protected abstract void IndexToRowCol(int index, ref int row, ref int col);
 
     protected Transform GetItem(int index)
     {
@@ -41,11 +65,7 @@ public class UIScrollBase
 
     protected void SetContentRect(Vector2 sizeDelta)
     {
-        _loopScrollView.Rect.anchorMin = new Vector2(0, 1);
-        _loopScrollView.Rect.anchorMax = Vector2.one;
-        _loopScrollView.Rect.pivot = new Vector2(0, 1);
-        _loopScrollView.Rect.sizeDelta = sizeDelta;
-        _loopScrollView.Rect.anchoredPosition3D = new Vector3(0, 0, 0);
+
     }
 
     protected void SetActive(GameObject go, bool value)
