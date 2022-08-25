@@ -28,7 +28,7 @@ public class UIScrollCol : UIScrollBase
     protected override void CalculateContent(int count)
     {
         _totalRow = TotalRow(count);
-        PageCount();
+        PageRow();
 
         float width = _loopScrollView.ScrollTR.sizeDelta.x;
         float height = _loopScrollView._cellSize.y * _totalRow + _loopScrollView._spacing.y * (_totalRow - 1);
@@ -51,7 +51,7 @@ public class UIScrollCol : UIScrollBase
         col = index % _loopScrollView._fixedCount;
     }
 
-    protected void PageCount()
+    protected void PageRow()
     {
         _pageRow = _loopScrollView.ScrollTR.sizeDelta.y / (_loopScrollView._cellSize.y + _loopScrollView._spacing.y);
     }
@@ -65,12 +65,10 @@ public class UIScrollCol : UIScrollBase
     public override void ScrollChange(Vector2 pos)
     {
         float startY = _loopScrollView.Rect.anchoredPosition.y;
-        float endY = startY + _loopScrollView.ScrollTR.sizeDelta.y;
-
-        float startRow = OffsetYToRow(startY);
-        float endRow = OffsetYToRow(endY);
-
-        Debug.LogError(pos.ToString("f2") + "   " + startRow + "    " + endRow);
+        int min = 0;
+        int max = 0;
+        PageMinMax(startY, ref min, ref max);
+        Create(min, max);
     }
 
     private float OffsetYToRow(float y)
@@ -89,6 +87,25 @@ public class UIScrollCol : UIScrollBase
         value = Mathf.Clamp01(value);
         Vector2 position = new Vector2(1, value);
         _loopScrollView.SetScrollRectPos(position);
+    }
+
+    protected void PageMinMax(float y, ref int min, ref int max)
+    {
+        float endY = y + _loopScrollView.ScrollTR.sizeDelta.y;
+        float startRow = OffsetYToRow(y);
+        float endRow = OffsetYToRow(endY);
+
+        startRow = Mathf.FloorToInt(startRow);
+        endRow = Mathf.CeilToInt(endRow);
+
+        min = Mathf.FloorToInt(startRow * _loopScrollView._fixedCount);
+        max = Mathf.CeilToInt(endRow * _loopScrollView._fixedCount);
+        Debug.LogError("startRow:" + startRow + "   endRow:" + endRow + "  min:" + min + "  max:" + max);
+    }
+
+    protected override void PageMinMax(ref int min, ref int max)
+    {
+        PageMinMax(0, ref min, ref max);
     }
 
 }

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public abstract class UIScrollBase
 {
     protected LoopScrollView _loopScrollView;
-    protected int _count;
 
     public UIScrollBase(LoopScrollView loopScrollView)
     {
@@ -15,8 +14,15 @@ public abstract class UIScrollBase
 
     public virtual void ItemCount(int count)
     {
-        _count = count;
+        int min = 0;
+        int max = 0;
+        PageMinMax(ref min, ref max);
+        Create( min, max);
+    }
 
+    protected void Create(int min, int max)
+    {
+        int count = 10;
         for (int i = 0; i < count; ++i)
         {
             Transform itemTr = GetItem(i);
@@ -78,5 +84,34 @@ public abstract class UIScrollBase
     public abstract void ScrollChange(Vector2 pos);
 
     public abstract void GoToIndex(int index);
+
+    protected abstract void PageMinMax(ref int min, ref int max);
+
+    private void InsertIndex(List<int> list, int value)
+    {
+        int left = 0;
+        int right = list.Count - 1;
+        int index = 0;
+        while (left < right)
+        {
+            int mid = (left + right) / 2;
+            if (list[mid] > value)
+            {
+                right = mid - 1;
+            }
+            else if (list[mid] == value)
+            {
+                index = mid;
+                break;
+            }
+            else
+            {
+                left = mid + 1;
+                index = left;
+            }
+        }
+
+
+    }
 
 }

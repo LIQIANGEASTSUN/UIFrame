@@ -74,12 +74,10 @@ public class UIScrollRow : UIScrollBase
     public override void ScrollChange(Vector2 pos)
     {
         float startX = _loopScrollView.Rect.anchoredPosition.x;
-        float endX = startX - _loopScrollView.ScrollTR.sizeDelta.x;
-
-        float startCol = OffsetXToCol(startX);
-        float endCol = OffsetXToCol(endX);
-
-        Debug.LogError(pos + "  " + startCol + "    " + endCol);
+        int min = 0;
+        int max = 0;
+        PageMinMax(startX, ref min, ref max);
+        Create(min, max);
     }
 
     private float OffsetXToCol(float x)
@@ -99,6 +97,26 @@ public class UIScrollRow : UIScrollBase
         value = Mathf.Clamp01(value);
         Vector2 position = new Vector2(value, 0);
         _loopScrollView.SetScrollRectPos(position);
+    }
+
+    protected void PageMinMax(float x, ref int min, ref int max)
+    {
+        float endX = x - _loopScrollView.ScrollTR.sizeDelta.x;
+        float startCol = OffsetXToCol(x);
+        float endCol = OffsetXToCol(endX);
+
+        startCol = Mathf.FloorToInt(startCol);
+        endCol = Mathf.CeilToInt(endCol);
+
+        min = Mathf.FloorToInt(startCol * _loopScrollView._fixedCount);
+        max = Mathf.CeilToInt(endCol * _loopScrollView._fixedCount);
+
+        Debug.LogError("startCol:" + startCol + "   endCol:" + endCol + "   min:" + min + "   max:" + max);
+    }
+
+    protected override void PageMinMax(ref int min, ref int max)
+    {
+        PageMinMax(0, ref min, ref max);
     }
 
 }
