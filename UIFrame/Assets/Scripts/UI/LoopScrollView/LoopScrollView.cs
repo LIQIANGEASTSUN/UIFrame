@@ -68,6 +68,12 @@ public class LoopScrollView : MonoBehaviour
         _scrollRect.normalizedPosition = position;
     }
 
+    /// <summary>
+    /// 跳转到第 index 个
+    /// 横向的第 index 显示在最左侧
+    /// 竖向的第 index 显示在最上方
+    /// </summary>
+    /// <param name="index"></param>
     public void GoToIndex(int index)
     {
         _uIScrollBase.GoToIndex(index);

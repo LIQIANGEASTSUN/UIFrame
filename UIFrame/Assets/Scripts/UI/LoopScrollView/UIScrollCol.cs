@@ -5,7 +5,14 @@
 /// </summary>
 public class UIScrollCol : UIScrollBase
 {
+    /// <summary>
+    /// 总行数
+    /// </summary>
     private int _totalRow;
+    /// <summary>
+    /// 显示区域能显示几行
+    /// </summary>
+    private float _pageRow;
     public UIScrollCol(LoopScrollView loopScrollView) : base(loopScrollView)
     {
 
@@ -21,6 +28,7 @@ public class UIScrollCol : UIScrollBase
     protected override void CalculateContent(int count)
     {
         _totalRow = TotalRow(count);
+        PageCount();
 
         float width = _loopScrollView.ScrollTR.sizeDelta.x;
         float height = _loopScrollView._cellSize.y * _totalRow + _loopScrollView._spacing.y * (_totalRow - 1);
@@ -43,6 +51,11 @@ public class UIScrollCol : UIScrollBase
         col = index % _loopScrollView._fixedCount;
     }
 
+    protected void PageCount()
+    {
+        _pageRow = _loopScrollView.ScrollTR.sizeDelta.y / (_loopScrollView._cellSize.y + _loopScrollView._spacing.y);
+    }
+
     private int TotalRow(int count)
     {
         int totalRow = Mathf.CeilToInt(count * 1.0f / _loopScrollView._fixedCount);
@@ -57,7 +70,7 @@ public class UIScrollCol : UIScrollBase
         float startRow = OffsetYToRow(startY);
         float endRow = OffsetYToRow(endY);
 
-        Debug.LogError(pos + "   " + startRow + "    " + endRow);
+        Debug.LogError(pos.ToString("f2") + "   " + startRow + "    " + endRow);
     }
 
     private float OffsetYToRow(float y)
@@ -72,7 +85,8 @@ public class UIScrollCol : UIScrollBase
         int col = 0;
         IndexToRowCol(index, ref row, ref col);
 
-        float value = 1 - row * 1.0f / _totalRow;
+        float value = 1 - row * 1.0f / (_totalRow - _pageRow);
+        value = Mathf.Clamp01(value);
         Vector2 position = new Vector2(1, value);
         _loopScrollView.SetScrollRectPos(position);
     }

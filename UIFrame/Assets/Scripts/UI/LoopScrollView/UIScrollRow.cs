@@ -10,7 +10,14 @@ offsetMax ： 对应Right、Top
 /// </summary>
 public class UIScrollRow : UIScrollBase
 {
+    /// <summary>
+    /// 总列数
+    /// </summary>
     private int _totalCol;
+    /// <summary>
+    /// 显示区域能显示几列
+    /// </summary>
+    private float _pageCol;
     public UIScrollRow(LoopScrollView loopScrollView) : base(loopScrollView)
     {
 
@@ -26,6 +33,7 @@ public class UIScrollRow : UIScrollBase
     protected override void CalculateContent(int count)
     {
         _totalCol = TotalCol(count);
+        PageCol();
 
         float width = _loopScrollView._cellSize.x * _totalCol + _loopScrollView._spacing.x * (_totalCol - 1);
         float height = _loopScrollView.ScrollTR.sizeDelta.y;
@@ -58,6 +66,11 @@ public class UIScrollRow : UIScrollBase
         col = index / _loopScrollView._fixedCount;
     }
 
+    private void PageCol()
+    {
+        _pageCol = _loopScrollView.ScrollTR.sizeDelta.x / (_loopScrollView._cellSize.x + _loopScrollView._spacing.x);
+    }
+
     public override void ScrollChange(Vector2 pos)
     {
         float startX = _loopScrollView.Rect.anchoredPosition.x;
@@ -82,8 +95,9 @@ public class UIScrollRow : UIScrollBase
         int col = 0;
         IndexToRowCol(index, ref row, ref col);
 
-        float value = 1 - row * 1.0f / _totalCol;
-        Vector2 position = new Vector2(1, value);
+        float value = col * 1.0f / (_totalCol - _pageCol);
+        value = Mathf.Clamp01(value);
+        Vector2 position = new Vector2(value, 0);
         _loopScrollView.SetScrollRectPos(position);
     }
 
