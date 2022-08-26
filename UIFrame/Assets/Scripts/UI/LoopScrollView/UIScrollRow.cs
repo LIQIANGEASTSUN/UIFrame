@@ -110,8 +110,6 @@ public class UIScrollRow : UIScrollBase
 
         min = Mathf.FloorToInt(startCol * _loopScrollView._fixedCount);
         max = Mathf.CeilToInt(endCol * _loopScrollView._fixedCount);
-
-        Debug.LogError("startCol:" + startCol + "   endCol:" + endCol + "   min:" + min + "   max:" + max);
     }
 
     protected override void PageMinMax(ref int min, ref int max)
