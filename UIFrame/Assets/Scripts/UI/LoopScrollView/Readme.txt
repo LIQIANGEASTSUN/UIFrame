@@ -40,3 +40,5 @@ _loopScrollView.GoToIndex(goToIndex);
 ///  Cell 子项显示类型
 /// 在 ScrollView 显示区域的 上方、下方、左边、右边、中间(当前显示)
 CellShowType cellShowType = _loopScrollView.GetCellShowType(50);
+
+
