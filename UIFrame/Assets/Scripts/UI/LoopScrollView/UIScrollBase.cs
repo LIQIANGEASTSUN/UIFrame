@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public abstract class UIScrollBase
 {
@@ -10,10 +11,12 @@ public abstract class UIScrollBase
     protected Transform _cloneItem;
     protected int _totalCount;
 
+    private Action<Transform, int> _refreshItemCallBack;
+
     public UIScrollBase(LoopScrollView loopScrollView)
     {
         _loopScrollView = loopScrollView;
-        _cloneItem = _loopScrollView.Rect.GetChild(0);
+        _cloneItem = _loopScrollView.ContentRect.GetChild(0);
     }
 
     public virtual void ItemCount(int count)
@@ -21,8 +24,13 @@ public abstract class UIScrollBase
         _totalCount = count;
         int min = 0;
         int max = 0;
-        PageMinMax(ref min, ref max);
+        PageMinMax(0, ref min, ref max);
         Create( min, max);
+    }
+
+    public void SetRefreshCallBack(Action<Transform, int> callBack)
+    {
+        _refreshItemCallBack = callBack;
     }
 
     protected void Create(int min, int max)
@@ -66,7 +74,7 @@ public abstract class UIScrollBase
             _dic[i] = item;
             Vector2 position = CalculateItemPosition(i);
             item.SetPosition(position);
-            RefreshItem(item._itemTr, i);
+            _refreshItemCallBack?.Invoke(item._itemTr, i);
         }
     }
 
@@ -90,7 +98,7 @@ public abstract class UIScrollBase
     {
         GameObject go = GameObject.Instantiate(_cloneItem.gameObject);
         Transform item = go.transform;
-        item.SetParent(_loopScrollView.Rect.transform);
+        item.SetParent(_loopScrollView.ContentRect.transform);
         item.localScale = Vector3.one;
         item.localRotation = Quaternion.identity;
         item.localPosition = Vector3.zero;
@@ -110,74 +118,24 @@ public abstract class UIScrollBase
 
     public abstract void GoToIndex(int index);
 
-    protected abstract void PageMinMax(ref int min, ref int max);
+    protected abstract void PageMinMax(float y, ref int min, ref int max);
 
-    private void RefreshItem(Transform itemTr, int index)
+    protected abstract void CurrentPageMinMax(ref int min, ref int max);
+
+    public CellShowType GetCellShowType(int index)
     {
-        Text text = itemTr.Find("Text").GetComponent<Text>();
-        text.text = index.ToString();
+        int min = 0;
+        int max = 0;
+        CurrentPageMinMax(ref min, ref max);
+
+        if (min <= index && index <= max)
+        {
+            return CellShowType.Center;
+        }
+
+        return GetCellShowType(index, min, max);
     }
 
-    private UIScrollItem InsertSearch(List<UIScrollItem> list, int value)
-    {
-        int left = 0;
-        int right = list.Count - 1;
-        int index = 0;
-        while (left < right)
-        {
-            int mid = (left + right) / 2;
-            if (list[mid]._index > value)
-            {
-                right = mid - 1;
-            }
-            else if (list[mid]._index == value)
-            {
-                index = mid;
-                break;
-            }
-            else
-            {
-                left = mid + 1;
-                index = left;
-            }
-        }
-
-        return index < list.Count ? list[index] : null;
-    }
-
-    private void InsertIndex(List<UIScrollItem> list, int value)
-    {
-        int left = 0;
-        int right = list.Count - 1;
-        int index = 0;
-        while (left < right)
-        {
-            int mid = (left + right) / 2;
-            if (list[mid]._index > value)
-            {
-                right = mid - 1;
-            }
-            else if (list[mid]._index == value)
-            {
-                index = mid;
-                break;
-            }
-            else
-            {
-                left = mid + 1;
-                index = left;
-            }
-        }
-
-        if (index >= list.Count)
-        {
-
-        }
-        else
-        {
-
-        }
-
-    }
+    protected abstract CellShowType GetCellShowType(int index, int pageMin, int pageMax);
 
 }

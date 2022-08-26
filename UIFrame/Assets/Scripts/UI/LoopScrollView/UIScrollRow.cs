@@ -39,19 +39,19 @@ public class UIScrollRow : UIScrollBase
         float height = _loopScrollView.ScrollTR.sizeDelta.y;
 
         Vector2 sizeDelta = new Vector2(width, height);
-        _loopScrollView.Rect.anchorMin = new Vector2(0, 0);
-        _loopScrollView.Rect.anchorMax = new Vector2(0, 1);
-        _loopScrollView.Rect.pivot = new Vector2(0, 1);
-        _loopScrollView.Rect.sizeDelta = sizeDelta;
-        _loopScrollView.Rect.anchoredPosition3D = new Vector3(0, 0, 0);
+        _loopScrollView.ContentRect.anchorMin = new Vector2(0, 0);
+        _loopScrollView.ContentRect.anchorMax = new Vector2(0, 1);
+        _loopScrollView.ContentRect.pivot = new Vector2(0, 1);
+        _loopScrollView.ContentRect.sizeDelta = sizeDelta;
+        _loopScrollView.ContentRect.anchoredPosition3D = new Vector3(0, 0, 0);
 
-        Vector2 offsetMin = _loopScrollView.Rect.anchorMin;
+        Vector2 offsetMin = _loopScrollView.ContentRect.anchorMin;
         offsetMin.y = 0;
-        _loopScrollView.Rect.offsetMin = offsetMin;
+        _loopScrollView.ContentRect.offsetMin = offsetMin;
 
-        Vector2 offsetMax = _loopScrollView.Rect.offsetMax;
+        Vector2 offsetMax = _loopScrollView.ContentRect.offsetMax;
         offsetMax.y = 0;
-        _loopScrollView.Rect.offsetMax = offsetMax;
+        _loopScrollView.ContentRect.offsetMax = offsetMax;
     }
 
     private int TotalCol(int count)
@@ -73,10 +73,9 @@ public class UIScrollRow : UIScrollBase
 
     public override void ScrollChange(Vector2 pos)
     {
-        float startX = _loopScrollView.Rect.anchoredPosition.x;
         int min = 0;
         int max = 0;
-        PageMinMax(startX, ref min, ref max);
+        CurrentPageMinMax(ref min, ref max);
         Create(min, max);
     }
 
@@ -99,7 +98,7 @@ public class UIScrollRow : UIScrollBase
         _loopScrollView.SetScrollRectPos(position);
     }
 
-    protected void PageMinMax(float x, ref int min, ref int max)
+    protected override void PageMinMax(float x, ref int min, ref int max)
     {
         float endX = x - _loopScrollView.ScrollTR.sizeDelta.x;
         float startCol = OffsetXToCol(x);
@@ -109,12 +108,25 @@ public class UIScrollRow : UIScrollBase
         endCol = Mathf.CeilToInt(endCol);
 
         min = Mathf.FloorToInt(startCol * _loopScrollView._fixedCount);
-        max = Mathf.CeilToInt(endCol * _loopScrollView._fixedCount);
+        max = Mathf.CeilToInt(endCol * _loopScrollView._fixedCount) - 1;
     }
 
-    protected override void PageMinMax(ref int min, ref int max)
+    protected override void CurrentPageMinMax(ref int min, ref int max)
     {
-        PageMinMax(0, ref min, ref max);
+        float startX = _loopScrollView.ContentRect.anchoredPosition.x;
+        PageMinMax(startX, ref min, ref max);
+    }
+
+    protected override CellShowType GetCellShowType(int index, int pageMin, int pageMax)
+    {
+        if (index < pageMin)
+        {
+            return CellShowType.Left;
+        }
+        else
+        {
+            return CellShowType.Right;
+        }
     }
 
 }
