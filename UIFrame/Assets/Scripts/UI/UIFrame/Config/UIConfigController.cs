@@ -45,6 +45,10 @@ public class UIConfigController
     // 注册面板信息
     private void RegisterPlaneInfo()
     {
+        //UIPlaneType.Main,   界面枚举
+        //new UIMainPlane(),  界面C实例
+        //"UIMainView",       界面预制体路径
+        //"MainLayer"         界面创建出来挂在那个物体下
         AddPlaneInfo(UIPlaneType.Main, new UIMainPlane(), "UIMainView", "MainLayer");
         AddPlaneInfo(UIPlaneType.Shop, new UIShopPlane(), "UIShopView", "MainLayer");
         AddPlaneInfo(UIPlaneType.Backpacker, new UIBackpackerPlane(), "UIBackpackerView", "MainLayer");

@@ -24,8 +24,8 @@ public abstract class UIBasePlane : IUIController
             _tr.gameObject.SetActive(true);
         }
 
-        View.Open(_tr, this);
         Model.Open(data);
+        View.Open(_tr, this);
     }
 
     public virtual void Close()
@@ -46,6 +46,7 @@ public abstract class UIBasePlane : IUIController
 
     public void CloseSelf()
     {
+        // _planeType 界面枚举值 
         UIManager.GetInstance().Close(_planeType);
     }
 

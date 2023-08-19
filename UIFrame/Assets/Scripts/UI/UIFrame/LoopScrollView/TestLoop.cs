@@ -6,18 +6,18 @@ public class TestLoop : MonoBehaviour
     private LoopScrollView _loopScrollView;
     public int goToIndex = 0;
 
-    // Start is called before the first frame update
     void Start()
     {
-        _loopScrollView = GetComponent<LoopScrollView>();
+        // 获取脚本
+        LoopScrollView _loopScrollView = GetComponent<LoopScrollView>();
+        // 初始化设置子项刷新回调方法
         _loopScrollView.Init(RefreshItem);
+        // 设置子项个数
         _loopScrollView.ItemCount(130);
-
-        
-
+        // 自动跳转到第多少个子项
+        _loopScrollView.GoToIndex(goToIndex);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
@@ -32,6 +32,6 @@ public class TestLoop : MonoBehaviour
         text.text = index.ToString();
 
         CellShowType cellShowType = _loopScrollView.GetCellShowType(50);
-        Debug.LogError(cellShowType);
+        Debug.LogError(index + "    " + cellShowType);
     }
 }
