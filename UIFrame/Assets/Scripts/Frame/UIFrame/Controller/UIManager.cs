@@ -26,6 +26,8 @@ namespace UIFrame
         /// 序为 A-B-C-D，则依次从栈中取出 D、C、B 并关闭，然后刷新界面A
         /// 为什么？避免出现 A-B-C-D-A-B-C-D-A-B-C-D 此类无限循环的界面
         /// </summary>
+        /// <param name="type">界面枚举值</param>
+        /// <param name="data">需要传递给界面的数据，需要是 IUIDataBase 类型</param>
         public void Open(UIPlaneType type, IUIDataBase data)
         {
             UIPlaneInfo info = null;
