@@ -15,8 +15,6 @@ public class GameRoot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UIManager.GetInstance().Update();
-
         if (Input.GetKeyDown(KeyCode.A))
         {
             // 打开或刷新界面

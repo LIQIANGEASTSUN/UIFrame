@@ -27,7 +27,6 @@ public class UIShopPlane : UIBasePlane
     // 返回按钮
     public void BackOnClick()
     {
-        UIManager.GetInstance().Close(UIPlaneType.Shop);
         Back();
     }
 

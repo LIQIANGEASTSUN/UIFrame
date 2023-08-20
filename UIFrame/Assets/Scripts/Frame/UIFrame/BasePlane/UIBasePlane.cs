@@ -2,6 +2,10 @@
 
 namespace UIFrame
 {
+    /// <summary>
+    /// 界面基类
+    /// 界面不提供 Update 方法，需要实时刷新的，自己在界面中添加计时器
+    /// </summary>
     public abstract class UIBasePlane : IUIController
     {
         protected UIPlaneType _planeType;
@@ -10,12 +14,22 @@ namespace UIFrame
         protected IUIDataBase _data;
         private IUIView _view;
         private IUIModel _model;
+        protected bool _isHungUp = false;
 
         public virtual void Init(UIPlaneType type)
         {
             _planeType = type;
         }
 
+        public bool IsHungUp
+        {
+            get { return _isHungUp; }
+        }
+
+        /// <summary>
+        /// 界面打开时触发
+        /// </summary>
+        /// <param name="data"></param>
         public virtual void Open(IUIDataBase data)
         {
             _data = data;
@@ -28,20 +42,28 @@ namespace UIFrame
             View.Open(_tr, this);
         }
 
+        // 界面关闭时触发
         public virtual void Close()
         {
         }
 
-        public virtual void Update()
-        {
-        }
-
+        /// <summary>
+        /// 挂起：当前打开 A 界面，打开B 界面的时候，调用 A 界面的 HangUp 挂起函数
+        /// HangUp 可以执行一个界面出屏幕的动画，或者 SetActive(false)
+        /// </summary>
         public virtual void HangUp()
         {
+            UnityEngine.Debug.LogError("HangUp:" + _planeType);
+            _isHungUp = true;
         }
 
+        /// <summary>
+        /// 恢复:当界面挂起后，恢复时
+        /// </summary>
         public virtual void Resume()
         {
+            _isHungUp = false;
+            UnityEngine.Debug.LogError("Resume:" + _planeType);
         }
 
         public void CloseSelf()

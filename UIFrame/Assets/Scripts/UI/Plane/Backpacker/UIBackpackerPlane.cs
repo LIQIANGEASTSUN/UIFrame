@@ -31,7 +31,6 @@ public class UIBackpackerPlane : UIBasePlane
     // 返回按钮
     public void BackOnClick()
     {
-        CloseSelf();
         Back();
     }
 }

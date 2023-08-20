@@ -19,18 +19,6 @@ namespace UIFrame
             _layerDic = new Dictionary<string, Transform>();
         }
 
-        public void Update()
-        {
-            for (int i = _uiInfoController.PlaneInfoList.Count - 1; i >= 0; --i)
-            {
-                if (_uiInfoController.PlaneInfoList[i].Plane.LoadComplete())
-                {
-                    _uiInfoController.PlaneInfoList[i].Plane.Update();
-                }
-            }
-            _uiInfoController.Update();
-        }
-
         /// <summary>
         /// 打开界面
         /// 原则：同一个界面同时只存在一个
@@ -40,16 +28,18 @@ namespace UIFrame
         /// </summary>
         public void Open(UIPlaneType type, IUIDataBase data)
         {
-            UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
-            if (null != info)
+            UIPlaneInfo info = null;
+            if (IsOpen(type))
             {
+                info = _uiInfoController.GetOpenPlaneInfo(type);
                 UIPlaneInfo lastInfo = _uiInfoController.LastOpenPlaneInfo();
-                while (lastInfo.Type != type)
+                while ((null != lastInfo) && lastInfo.Type != type)
                 {
                     Close(lastInfo.Type);
                     lastInfo = _uiInfoController.LastOpenPlaneInfo();
                 }
             }
+
             Open(info, type, data);
         }
 
@@ -67,17 +57,32 @@ namespace UIFrame
                 {
                     info.Plane.Open(data);
                 }
-                _uiInfoController.AddInfo(info);
             }
             else
             {
                 UIBasePlane plane = LoadPanel(type, data);
                 plane.Init(type);
                 info = new UIPlaneInfo(type, plane);
+            }
+
+            Hungup(type);
+            info.IsRecycle = false;
+            if (!IsOpen(info.Type))
+            {
                 _uiInfoController.AddInfo(info);
             }
 
-            info.IsRecycle = false;
+            _uiInfoController.Update();
+        }
+
+        // 挂起面板，打开一个面板挂起最后一个面板
+        private void Hungup(UIPlaneType type)
+        {
+            UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
+            if (null != info && info.Type != type && !info.Plane.IsHungUp)
+            {
+                info.Plane.HangUp();
+            }
         }
 
         public void Close(UIPlaneType type)
@@ -91,13 +96,28 @@ namespace UIFrame
                 info.Plane.Tr.gameObject.SetActive(false);
                 _uiInfoController.RemoveInfo(info);
             }
+
+            Resume();
+            _uiInfoController.Update();
         }
 
-        // 返回上一个界面
+        /// <summary>
+        /// 返回上一个界面
+        /// 关闭最有一个打开的界面
+        /// </summary>
         public void Back()
         {
             UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
             if (null != info)
+            {
+                Close(info.Type);
+            }
+        }
+
+        private void Resume()
+        {
+            UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
+            if (null != info && info.Plane.IsHungUp)
             {
                 info.Plane.Resume();
             }
