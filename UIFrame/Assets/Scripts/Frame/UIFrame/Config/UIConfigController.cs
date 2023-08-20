@@ -10,7 +10,6 @@ namespace UIFrame
             _configDic = new Dictionary<UIPlaneType, UIConfig>();
             RegisterPlaneInfo();
             RegisterMutual();
-            RegisterHungup();
         }
 
         public UIConfig GetConfig(UIPlaneType type)
@@ -22,24 +21,6 @@ namespace UIFrame
         {
             UIConfig uiConfig = new UIConfig(type, basePlane, assetName, layerName);
             _configDic.Add(type, uiConfig);
-        }
-
-        private void AddMutual(UIPlaneType type, HashSet<UIPlaneType> hash)
-        {
-            UIConfig uiConfig = null;
-            if (_configDic.TryGetValue(type, out uiConfig))
-            {
-                uiConfig.SetMutualHash(hash);
-            }
-        }
-
-        private void AddHungup(UIPlaneType type, HashSet<UIPlaneType> hash)
-        {
-            UIConfig uiConfig = null;
-            if (_configDic.TryGetValue(type, out uiConfig))
-            {
-                uiConfig.SetHungupHash(hash);
-            }
         }
 
         // 注册面板信息
@@ -59,11 +40,5 @@ namespace UIFrame
         {
             //AddMutual(UIPlaneType.Backpacker, new HashSet<UIPlaneType>() { UIPlaneType.Shop });
         }
-
-        private void RegisterHungup()
-        {
-            AddHungup(UIPlaneType.Backpacker, new HashSet<UIPlaneType>() { UIPlaneType.Shop });
-        }
     }
-
 }

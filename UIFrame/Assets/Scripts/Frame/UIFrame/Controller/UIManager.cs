@@ -33,8 +33,6 @@ namespace UIFrame
 
         /// <summary>
         /// 打开界面
-        /// Mutual 从打开界面的栈中从后往前关闭UIConfig中配置的互斥面板
-        /// Hungup 从打开界面的栈中从后往前挂起UIConfig中配置的挂起面板
         /// 原则：同一个界面同时只存在一个
         /// 如果要打开的界面已经打开了，例：打开界面 A，目前打开的界面顺
         /// 序为 A-B-C-D，则依次从栈中取出 D、C、B 并关闭，然后刷新界面A
@@ -42,8 +40,6 @@ namespace UIFrame
         /// </summary>
         public void Open(UIPlaneType type, IUIDataBase data)
         {
-            Mutual(type);
-            Hungup(type);
             UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
             if (null != info)
             {
@@ -54,22 +50,6 @@ namespace UIFrame
                     lastInfo = _uiInfoController.LastOpenPlaneInfo();
                 }
             }
-            Open(info, type, data);
-        }
-
-        /// <summary>
-        /// 打开界面
-        /// Mutual 从打开界面的栈中从后往前关闭UIConfig中配置的互斥面板
-        /// Hungup 从打开界面的栈中从后往前挂起UIConfig中配置的挂起面板
-        /// 原则：同一个界面同时只存在一个
-        /// 如果要打开的界面已经打开了，例：打开界面 A，目前打开的界面顺
-        /// 序为 A-B-C-D，则刷新界面A
-        /// </summary>
-        public void OpenOrRefresh(UIPlaneType type, IUIDataBase data)
-        {
-            Mutual(type);
-            Hungup(type);
-            UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
             Open(info, type, data);
         }
 
@@ -123,43 +103,6 @@ namespace UIFrame
             }
         }
 
-        // 互斥面板，打开一个面板从后往前关掉互斥面板
-        private void Mutual(UIPlaneType type)
-        {
-            UIConfig uiConfig = _uiConfigController.GetConfig(type);
-            if (null == uiConfig || null == uiConfig.MutualHash)
-            {
-                return;
-            }
-
-            UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
-            while (null != info)
-            {
-                if (!uiConfig.MutualHash.Contains(info.Type))
-                {
-                    break;
-                }
-                Close(info.Type);
-                info = _uiInfoController.LastOpenPlaneInfo();
-            }
-        }
-
-        // 挂起面板，打开一个面板挂起最后一个面板
-        private void Hungup(UIPlaneType type)
-        {
-            UIConfig uiConfig = _uiConfigController.GetConfig(type);
-            if (null == uiConfig || null == uiConfig.HungupHash)
-            {
-                return;
-            }
-
-            UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
-            if (uiConfig.HungupHash.Contains(info.Type))
-            {
-                info.Plane.HangUp();
-            }
-        }
-
         public bool IsOpen(UIPlaneType type)
         {
             UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
@@ -187,35 +130,6 @@ namespace UIFrame
                 _layerDic[layerName] = tr;
             }
             return tr;
-        }
-    }
-
-    public struct UIPlaneGoLoad
-    {
-        private UIConfig _uiConfig;
-        private Transform _layerTr;
-        private IUIDataBase _data;
-        public UIPlaneGoLoad(UIConfig uiConfig, Transform layerTr, IUIDataBase data)
-        {
-            _uiConfig = uiConfig;
-            _layerTr = layerTr;
-            _data = data;
-
-            ResourceRequest resourceRequest = Resources.LoadAsync<GameObject>(uiConfig.AssetName);
-            resourceRequest.completed += LoadComplete;
-        }
-
-        private void LoadComplete(AsyncOperation asyncOperation)
-        {
-            ResourceRequest resourceRequest = asyncOperation as ResourceRequest;
-            GameObject g = resourceRequest.asset as GameObject;
-            GameObject instance = GameObject.Instantiate(g, _layerTr);
-            instance.transform.SetAsLastSibling();
-            instance.transform.localScale = Vector3.one;
-            instance.transform.rotation = Quaternion.identity;
-            instance.transform.localPosition = Vector3.zero;
-            _uiConfig.BasePlane.SetTransform(instance.transform);
-            _uiConfig.BasePlane.Open(_data);
         }
     }
 }

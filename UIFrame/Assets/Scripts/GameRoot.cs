@@ -20,7 +20,7 @@ public class GameRoot : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             // 打开或刷新界面
-            UIManager.GetInstance().OpenOrRefresh(UIPlaneType.Main, null);
+            UIManager.GetInstance().Open(UIPlaneType.Main, null);
         }
 
         if (Input.GetKeyDown(KeyCode.D))
