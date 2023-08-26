@@ -9,7 +9,6 @@ namespace UIFrame
         {
             _configDic = new Dictionary<UIPlaneType, UIConfig>();
             RegisterPlaneInfo();
-            RegisterMutual();
         }
 
         public UIConfig GetConfig(UIPlaneType type)
@@ -33,12 +32,6 @@ namespace UIFrame
             AddPlaneInfo(UIPlaneType.Main, new UIMainPlane(), "UIMainView", "MainLayer");
             AddPlaneInfo(UIPlaneType.Shop, new UIShopPlane(), "UIShopView", "MainLayer");
             AddPlaneInfo(UIPlaneType.Backpacker, new UIBackpackerPlane(), "UIBackpackerView", "MainLayer");
-        }
-
-        // 注册互斥面板
-        private void RegisterMutual()
-        {
-            //AddMutual(UIPlaneType.Backpacker, new HashSet<UIPlaneType>() { UIPlaneType.Shop });
         }
     }
 }

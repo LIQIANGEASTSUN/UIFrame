@@ -5,7 +5,6 @@ namespace UIFrame
     {
         private UIPlaneType _type;
         private UIBasePlane _plane;
-        private int _recycleTime;
         private bool _isRecycle;
 
         public UIPlaneInfo(UIPlaneType type, UIBasePlane plane)
@@ -22,18 +21,6 @@ namespace UIFrame
         public UIBasePlane Plane
         {
             get { return _plane; }
-        }
-
-        public bool IsRecycle
-        {
-            get { return _isRecycle; }
-            set { _isRecycle = true; }
-        }
-
-        public int RecycleTime
-        {
-            get { return _recycleTime; }
-            set { _recycleTime = value; }
         }
     }
 }

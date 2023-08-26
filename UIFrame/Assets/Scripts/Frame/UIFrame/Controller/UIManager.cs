@@ -47,11 +47,6 @@ namespace UIFrame
 
         private void Open(UIPlaneInfo info, UIPlaneType type, IUIDataBase data)
         {
-            if (null == info)
-            {
-                info = _uiInfoController.GetRecyclePlaneInfo(type);
-            }
-
             if (null != info)
             {
                 info.Plane.Tr.gameObject.SetActive(true);
@@ -68,7 +63,6 @@ namespace UIFrame
             }
 
             Hungup(type);
-            info.IsRecycle = false;
             if (!IsOpen(info.Type))
             {
                 _uiInfoController.AddInfo(info);
@@ -92,8 +86,6 @@ namespace UIFrame
             UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
             if (null != info)
             {
-                info.IsRecycle = true;
-                info.RecycleTime = (int)Time.realtimeSinceStartup;
                 info.Plane.Close();
                 info.Plane.Tr.gameObject.SetActive(false);
                 _uiInfoController.RemoveInfo(info);
