@@ -26,8 +26,8 @@ namespace UIFrame
             instance.transform.localScale = Vector3.one;
             instance.transform.rotation = Quaternion.identity;
             instance.transform.localPosition = Vector3.zero;
-            _uiConfig.BasePlane.SetTransform(instance.transform);
-            _uiConfig.BasePlane.Open(_data);
+            _uiConfig.Plane.SetTransform(instance.transform);
+            _uiConfig.Plane.Open(_data);
         }
     }
 }

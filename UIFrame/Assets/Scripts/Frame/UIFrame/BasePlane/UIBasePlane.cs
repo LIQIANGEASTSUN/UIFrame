@@ -16,14 +16,36 @@ namespace UIFrame
         private IUIModel _model;
         protected bool _isHungUp = false;
 
-        public virtual void Init(UIPlaneType type)
+
+        public Transform Tr
         {
-            _planeType = type;
+            get { return _tr; }
+        }
+
+        protected IUIView View
+        {
+            get
+            {
+                return _view;
+            }
+            set { _view = value; }
+        }
+
+        protected IUIModel Model
+        {
+            get { return _model; }
+            set { _model = value; }
         }
 
         public bool IsHungUp
         {
             get { return _isHungUp; }
+            private set { _isHungUp = value; }
+        }
+
+        public virtual void Init(UIPlaneType type)
+        {
+            _planeType = type;
         }
 
         /// <summary>
@@ -54,7 +76,7 @@ namespace UIFrame
         public virtual void HangUp()
         {
             UnityEngine.Debug.LogError("HangUp:" + _planeType);
-            _isHungUp = true;
+            IsHungUp = true;
         }
 
         /// <summary>
@@ -62,7 +84,7 @@ namespace UIFrame
         /// </summary>
         public virtual void Resume()
         {
-            _isHungUp = false;
+            IsHungUp = false;
             UnityEngine.Debug.LogError("Resume:" + _planeType);
         }
 
@@ -77,20 +99,10 @@ namespace UIFrame
             UIManager.GetInstance().Back();
         }
 
-        public virtual void Destroy()
-        {
-
-        }
-
         public void SetTransform(Transform tr)
         {
             _tr = tr;
             _trLoadComplete = true;
-        }
-
-        public Transform Tr
-        {
-            get { return _tr; }
         }
 
         public bool LoadComplete()
@@ -98,19 +110,9 @@ namespace UIFrame
             return _trLoadComplete;
         }
 
-        protected IUIView View
+        public virtual void Destroy()
         {
-            get
-            {
-                return _view;
-            }
-            set { _view = value; }
-        }
 
-        protected IUIModel Model
-        {
-            get { return _model; }
-            set { _model = value; }
         }
     }
 }

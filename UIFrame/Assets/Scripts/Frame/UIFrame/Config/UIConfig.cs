@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace UIFrame
 {
     public class UIConfig
     {
         private UIPlaneType _type;
-        private UIBasePlane _basePlane;
+        private UIBasePlane _plane;
         private string _assetName;
         private string _layer;
+
         public UIConfig(UIPlaneType type, UIBasePlane basePlane, string assetName, string layer)
         {
             _type = type;
-            _basePlane = basePlane;
+            _plane = basePlane;
             _assetName = assetName;
             _layer = layer;
         }
@@ -21,9 +21,9 @@ namespace UIFrame
             get { return _type; }
         }
 
-        public UIBasePlane BasePlane
+        public UIBasePlane Plane
         {
-            get { return _basePlane; }
+            get { return _plane; }
         }
 
         public string AssetName

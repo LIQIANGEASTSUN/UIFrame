@@ -5,7 +5,7 @@ namespace UIFrame
 {
     public class UIManager : SingletonObject<UIManager>
     {
-        private UIInfoController _uiInfoController;
+        private UIOpenPlaneController _openPlaneController;
         private UIConfigController _uiConfigController;
 
         private Transform _root;
@@ -13,7 +13,7 @@ namespace UIFrame
 
         public UIManager()
         {
-            _uiInfoController = new UIInfoController();
+            _openPlaneController = new UIOpenPlaneController();
             _uiConfigController = new UIConfigController();
             _root = GameObject.Find("UIRoot").transform;
             _layerDic = new Dictionary<string, Transform>();
@@ -30,26 +30,19 @@ namespace UIFrame
         /// <param name="data">需要传递给界面的数据，需要是 IUIDataBase 类型</param>
         public void Open(UIPlaneType type, IUIDataBase data)
         {
-            UIPlaneInfo info = null;
+            UIConfig info = null;
             if (IsOpen(type))
             {
-                info = _uiInfoController.GetOpenPlaneInfo(type);
-                UIPlaneInfo lastInfo = _uiInfoController.LastOpenPlaneInfo();
+                UIConfig lastInfo = _openPlaneController.LastOpenPlaneInfo();
                 while ((null != lastInfo) && lastInfo.Type != type)
                 {
                     Close(lastInfo.Type);
-                    lastInfo = _uiInfoController.LastOpenPlaneInfo();
+                    lastInfo = _openPlaneController.LastOpenPlaneInfo();
                 }
-            }
 
-            Open(info, type, data);
-        }
-
-        private void Open(UIPlaneInfo info, UIPlaneType type, IUIDataBase data)
-        {
-            if (null != info)
-            {
+                info = _uiConfigController.GetConfig(type);
                 info.Plane.Tr.gameObject.SetActive(true);
+                Resume(info);
                 if (info.Plane.LoadComplete())
                 {
                     info.Plane.Open(data);
@@ -57,82 +50,69 @@ namespace UIFrame
             }
             else
             {
-                UIBasePlane plane = LoadPanel(type, data);
-                plane.Init(type);
-                info = new UIPlaneInfo(type, plane);
-            }
-
-            Hungup(type);
-            if (!IsOpen(info.Type))
-            {
-                _uiInfoController.AddInfo(info);
-            }
-
-            _uiInfoController.Update();
-        }
-
-        // 挂起面板，打开一个面板挂起最后一个面板
-        private void Hungup(UIPlaneType type)
-        {
-            UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
-            if (null != info && info.Type != type && !info.Plane.IsHungUp)
-            {
-                info.Plane.HangUp();
+                UIConfig last = _openPlaneController.LastOpenPlaneInfo();
+                Hungup(last);
+                info = _uiConfigController.GetConfig(type);
+                LoadPanel(info, data);
+                info.Plane.Init(type);
+                _openPlaneController.AddInfo(info);
             }
         }
 
         public void Close(UIPlaneType type)
         {
-            UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
+            UIConfig info = _uiConfigController.GetConfig(type);
             if (null != info)
             {
                 info.Plane.Close();
                 info.Plane.Tr.gameObject.SetActive(false);
-                _uiInfoController.RemoveInfo(info);
+                _openPlaneController.RemoveInfo(info);
+                info.Plane.Destroy();
+                GameObject.Destroy(info.Plane.Tr.gameObject);
             }
 
-            Resume();
-            _uiInfoController.Update();
+            info = _openPlaneController.LastOpenPlaneInfo();
+            Resume(info);
         }
 
-        /// <summary>
-        /// 返回上一个界面
-        /// 关闭最有一个打开的界面
-        /// </summary>
-        public void Back()
+        // 挂起面板，打开一个面板挂起最后一个面板
+        private void Hungup(UIConfig info)
         {
-            UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
-            if (null != info)
+            if (null != info && !info.Plane.IsHungUp)
             {
-                Close(info.Type);
+                info.Plane.HangUp();
             }
         }
 
-        private void Resume()
+        private void Resume(UIConfig info)
         {
-            UIPlaneInfo info = _uiInfoController.LastOpenPlaneInfo();
             if (null != info && info.Plane.IsHungUp)
             {
                 info.Plane.Resume();
             }
         }
 
-        public bool IsOpen(UIPlaneType type)
+        /// <summary>
+        /// 返回上一个界面：关闭最后一个打开的界面
+        /// </summary>
+        public void Back()
         {
-            UIPlaneInfo info = _uiInfoController.GetOpenPlaneInfo(type);
-            return null != info;
+            UIConfig info = _openPlaneController.LastOpenPlaneInfo();
+            if (null != info)
+            {
+                Close(info.Type);
+            }
         }
 
-        private UIBasePlane LoadPanel(UIPlaneType type, IUIDataBase data)
+        public bool IsOpen(UIPlaneType type)
         {
-            UIConfig uiConfig = _uiConfigController.GetConfig(type);
-            if (null == uiConfig.BasePlane.Tr)
-            {
-                Transform layerTr = LayerTransform(uiConfig.Layer);
-                UIPlaneGoLoad uIPlaneGoLoad = new UIPlaneGoLoad(uiConfig, layerTr, data);
-            }
+            return _openPlaneController.IsOpen(type);
+        }
 
-            return uiConfig.BasePlane;
+        private void LoadPanel(UIConfig uiConfig, IUIDataBase data)
+        {
+            Transform layerTr = LayerTransform(uiConfig.Layer);
+            UIPlaneGoLoad uIPlaneGoLoad = new UIPlaneGoLoad(uiConfig, layerTr, data);
         }
 
         private Transform LayerTransform(string layerName)
@@ -144,6 +124,14 @@ namespace UIFrame
                 _layerDic[layerName] = tr;
             }
             return tr;
+        }
+
+        public UIConfigController UIConfigController
+        {
+            get
+            {
+                return _uiConfigController;
+            }
         }
     }
 }
